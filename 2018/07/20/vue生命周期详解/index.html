@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="vue生命周期,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="hjia's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="生命周期图中名词解释： 昨天写demo时发现好像对vue的生命周期不太理解，今天再来学习了一下，看了一些别人写的博客，有的涉及源码的文章其实，没太看懂，但是还是先把看的相关资料整合如下，方便以后回顾查阅。 生命周期图vue官网给的生命周期图如下：   注：该图来自 vue生命周期解析 生命周期图中名词解释   new vue 创建vue实例     init events &amp;amp; lifecy">
+<meta name="keywords" content="vue生命周期">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vue生命周期详解">
+<meta property="og:url" content="https://julyjia.github.io/2018/07/20/vue生命周期详解/index.html">
+<meta property="og:site_name" content="hjia&#39;s Blog">
+<meta property="og:description" content="生命周期图中名词解释： 昨天写demo时发现好像对vue的生命周期不太理解，今天再来学习了一下，看了一些别人写的博客，有的涉及源码的文章其实，没太看懂，但是还是先把看的相关资料整合如下，方便以后回顾查阅。 生命周期图vue官网给的生命周期图如下：   注：该图来自 vue生命周期解析 生命周期图中名词解释   new vue 创建vue实例     init events &amp;amp; lifecy">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/5/21/163833416472aa86?imageslim">
+<meta property="og:updated_time" content="2018-07-20T14:17:24.867Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="vue生命周期详解">
+<meta name="twitter:description" content="生命周期图中名词解释： 昨天写demo时发现好像对vue的生命周期不太理解，今天再来学习了一下，看了一些别人写的博客，有的涉及源码的文章其实，没太看懂，但是还是先把看的相关资料整合如下，方便以后回顾查阅。 生命周期图vue官网给的生命周期图如下：   注：该图来自 vue生命周期解析 生命周期图中名词解释   new vue 创建vue实例     init events &amp;amp; lifecy">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2018/5/21/163833416472aa86?imageslim">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'julyjia'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://julyjia.github.io/2018/07/20/vue生命周期详解/">
+
+
+
+
+
+  <title>vue生命周期详解 | hjia's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d306ca89ff1819bf590c5e3f820fd918";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">hjia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://julyjia.github.io/2018/07/20/vue生命周期详解/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hjia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hjia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">vue生命周期详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-20T21:12:04+08:00">
+                2018-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/vue/" itemprop="url" rel="index">
+                    <span itemprop="name">vue</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/20/vue生命周期详解/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/07/20/vue生命周期详解/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>生命周期图中名词解释：</p>
+<p>昨天写demo时发现好像对vue的生命周期不太理解，今天再来学习了一下，看了一些别人写的博客，有的涉及源码的文章其实，没太看懂，但是还是先把看的相关资料整合如下，方便以后回顾查阅。</p>
+<h2 id="生命周期图"><a href="#生命周期图" class="headerlink" title="生命周期图"></a>生命周期图</h2><p>vue官网给的生命周期图如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2018/5/21/163833416472aa86?imageslim" alt="img"> </p>
+<p>注：该图来自 <a href="https://juejin.im/post/5b02de32f265da0b9265e655" target="_blank" rel="noopener">vue生命周期解析</a></p>
+<h2 id="生命周期图中名词解释"><a href="#生命周期图中名词解释" class="headerlink" title="生命周期图中名词解释"></a>生命周期图中名词解释</h2><table>
+<thead>
+<tr>
+<th>new vue</th>
+<th>创建vue实例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>init events &amp; lifecycle</td>
+<td>开始初始化。Init Events 方法初始化事件的相关属性：on、off、emit ； Init Lifecycle方法主要是为vm对象添加了$parent、$root、$children、$refs等属性，以及一些其它的生命周期相关的标识</td>
+</tr>
+<tr>
+<td>beforeCreate</td>
+<td>组件刚被创建，组建属性计算之前，如data属性等</td>
+</tr>
+<tr>
+<td>init injections &amp; reactivity</td>
+<td>通过依赖注入导入依赖项</td>
+</tr>
+<tr>
+<td>created</td>
+<td>组件实例创建完成，属性已绑定，此时DOM还未生成</td>
+</tr>
+<tr>
+<td>el属性</td>
+<td>检查vue配置，即new Vue{}里面的el项是否存在，有就继续检查template项。没有则等到手动绑定调用vm.$mount()</td>
+</tr>
+<tr>
+<td>template</td>
+<td>检查配置中的template项，如果没有template进行填充被绑定区域，则被绑定区域的el对象的outerHTML（即整个#app DOM对象，包括<div id="”app”">和</div>标签）都作为被填充对象替换掉填充区域</td>
+</tr>
+<tr>
+<td>beforeMount</td>
+<td>模板编译、挂载之前</td>
+</tr>
+<tr>
+<td>create vm.$el and replace “el” with it</td>
+<td>编译，并替换了被绑定元素</td>
+</tr>
+<tr>
+<td>mounted</td>
+<td>编译、挂载</td>
+</tr>
+<tr>
+<td>Before update</td>
+<td>组件更新之前</td>
+</tr>
+<tr>
+<td>updated</td>
+<td>组件更新之后</td>
+</tr>
+<tr>
+<td>destroy</td>
+<td>当vm.$destroy()被调用，开始拆卸组件和监听器，生命周期终结</td>
+</tr>
+</tbody>
+</table>
+<p>来自：  <a href="https://blog.csdn.net/Coder_Chang/article/details/78758537" target="_blank" rel="noopener">vue生命周期、钩子理解</a></p>
+<p>Vue2.0的生命周期钩子一共有10个，结合官方文档作出了下表：</p>
+<table>
+<thead>
+<tr>
+<th>生命周期钩子</th>
+<th>详细</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>beforeCreate</td>
+<td>在实例初始化之后，数据观测(data observer) 和 event/watcher 事件配置之前被调用。</td>
+</tr>
+<tr>
+<td>created</td>
+<td>实例已经创建完成之后被调用。在这一步，实例已完成以下的配置：数据观测(data observer)，属性和方法的运算， watch/event 事件回调。然而，挂载阶段还没开始，$el 属性目前不可见。</td>
+</tr>
+<tr>
+<td>beforeMount</td>
+<td>在挂载开始之前被调用：相关的 render 函数首次被调用。</td>
+</tr>
+<tr>
+<td>mounted</td>
+<td>el 被新创建的 <code>vm.$el</code> 替换，并挂载到实例上去之后调用该钩子。如果 root 实例挂载了一个文档内元素，当 mounted 被调用时<code>vm.$el</code>也在文档内。</td>
+</tr>
+<tr>
+<td>beforeUpdate</td>
+<td>数据更新时调用，发生在虚拟 DOM 重新渲染和打补丁之前。你可以在这个钩子中进一步地更改状态，这不会触发附加的重渲染过程。</td>
+</tr>
+<tr>
+<td>updated</td>
+<td>由于数据更改导致的虚拟 DOM 重新渲染和打补丁，在这之后会调用该钩子。当这个钩子被调用时，组件 DOM 已经更新，所以你现在可以执行依赖于 DOM 的操作。</td>
+</tr>
+<tr>
+<td>activated</td>
+<td>keep-alive 组件激活时调用。</td>
+</tr>
+<tr>
+<td>deactivated</td>
+<td>keep-alive 组件停用时调用。</td>
+</tr>
+<tr>
+<td>beforeDestroy</td>
+<td>实例销毁之前调用。在这一步，实例仍然完全可用。</td>
+</tr>
+<tr>
+<td>destroyed</td>
+<td>Vue 实例销毁后调用。调用后，Vue 实例指示的所有东西都会解绑定，所有的事件监听器会被移除，所有的子实例也会被销毁。</td>
+</tr>
+</tbody>
+</table>
+<p>（除了beforeCreate和created钩子之外，其他钩子均在服务器端渲染期间不被调用。）</p>
+<p>来自<a href="https://blog.csdn.net/qq_25186543/article/details/79470184" target="_blank" rel="noopener">Vue.js2.0生命周期的研究与理解</a></p>
+<h3 id="callHook"><a href="#callHook" class="headerlink" title="callHook"></a>callHook</h3><p>生命周期其实就是在源码的某个时间点执行了callHook方法来调用vm.$options的生命周期钩子方法 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// vue/src/core/instance/lifecycle.js</span><br><span class="line">export function callHook (vm: Component, hook: string) &#123;</span><br><span class="line">  const handlers = vm.$options[hook] // 获取Vue选项中的生命周期钩子函数</span><br><span class="line">  if (handlers) &#123;</span><br><span class="line">    for (let i = 0, j = handlers.length; i &lt; j; i++) &#123;</span><br><span class="line">      try &#123;</span><br><span class="line">        handlers[i].call(vm) // 执行生命周期函数</span><br><span class="line">      &#125; catch (e) &#123;</span><br><span class="line">        handleError(e, vm, `$&#123;hook&#125; hook`)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  if (vm._hasHookEvent) &#123;</span><br><span class="line">    vm.$emit(&apos;hook:&apos; + hook)</span><br><span class="line">  &#125;</span><br><span class="line">  popTarget()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如触发created钩子的方法：callHook(vm, ‘created’) </p>
+<h3 id="new-Vue"><a href="#new-Vue" class="headerlink" title="new Vue()"></a>new Vue()</h3><h3 id="创建Vue对象，通过构造函数的形式创建"><a href="#创建Vue对象，通过构造函数的形式创建" class="headerlink" title="创建Vue对象，通过构造函数的形式创建"></a>创建Vue对象，通过构造函数的形式创建</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// vue/src/core/instance/index.js</span><br><span class="line">function Vue (options) &#123;</span><br><span class="line">  if (process.env.NODE_ENV !== &apos;production&apos; &amp;&amp;</span><br><span class="line">    !(this instanceof Vue)</span><br><span class="line">  ) &#123; //判断是否是通过new关键字创建Vue对象</span><br><span class="line">    warn(&apos;Vue is a constructor and should be called with the `new` keyword&apos;)</span><br><span class="line">  &#125;</span><br><span class="line">  this._init(options) // 初始化各个功能</span><br></pre></td></tr></table></figure>
+<h3 id="this-init"><a href="#this-init" class="headerlink" title="this._init()"></a>this._init()</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// vue/src/core/instance/init.js</span><br><span class="line"> Vue.prototype._init = function (options?: Object) &#123;</span><br><span class="line">    /* istanbul ignore else */</span><br><span class="line">    if (process.env.NODE_ENV !== &apos;production&apos;) &#123;</span><br><span class="line">      initProxy(vm)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      vm._renderProxy = vm</span><br><span class="line">    &#125;</span><br><span class="line">    // expose real self</span><br><span class="line">    vm._self = vm</span><br><span class="line">    initLifecycle(vm) //初始化生命周期</span><br><span class="line">    initEvents(vm) //初始化事件</span><br><span class="line">    initRender(vm) //初始化渲染</span><br><span class="line">    callHook(vm, &apos;beforeCreate&apos;) //触发beforeCreate钩子</span><br><span class="line">    initInjections(vm) // resolve injections before data/props 初始化Inject</span><br><span class="line">    initState(vm) //初始化数据</span><br><span class="line">    initProvide(vm) // resolve provide after data/props 初始化Provide</span><br><span class="line">    callHook(vm, &apos;created&apos;) //触发created钩子</span><br><span class="line"></span><br><span class="line">    if (vm.$options.el) &#123; //判断是否有el选项,如果有则执行$mount方法</span><br><span class="line">      vm.$mount(vm.$options.el)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>整个初始化过程中大致做的事情：</p>
+<ul>
+<li>initLifecycle(vm) //初始化生命周期</li>
+<li>initEvents(vm)  //初始化事件</li>
+<li>initRender(vm)  //初始化渲染</li>
+<li>callHook(vm, ‘beforeCreate’) //触发beforeCreate钩子</li>
+<li>initInjections(vm) // resolve injections before data/props 初始化Inject</li>
+<li>initState(vm) //初始化数据</li>
+<li>initProvide(vm) // resolve provide after data/props 初始化Provide</li>
+<li>callHook(vm, ‘created’) //触发created钩子</li>
+</ul>
+<h3 id="Init-Events-amp-amp-Lifecycle"><a href="#Init-Events-amp-amp-Lifecycle" class="headerlink" title="Init Events &amp;&amp; Lifecycle"></a><strong>Init Events &amp;&amp; Lifecycle</strong></h3><p>初始化事件和生命周期发生在创建Vue对象的过程中并在触发beforeCreate钩子之前，此过程还包含了初始化渲染。</p>
+<ul>
+<li>Init Events 方法初始化事件的相关属性：on、off、emit ；</li>
+<li>Init Lifecycle方法主要是为vm对象添加了<code>$parent</code>、<code>$root</code>、<code>$children</code>、<code>$refs</code>等属性，以及一些其它的生命周期相关的标识 ;</li>
+<li>initRender(vm)，主要是给vm添加虚拟dom、solt等相关属性和方法 。</li>
+</ul>
+<h3 id="beforeCreate"><a href="#beforeCreate" class="headerlink" title="beforeCreate()"></a><strong>beforeCreate()</strong></h3><p>该钩子函数在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用。</p>
+<p>beforeCreate执行时：data和el均未初始化，值为undefined 。<strong>就是实例初始化，Vue会将所有的data数据和methods中的函数添加到创建的vue对象上面。</strong> </p>
+<h3 id="Init-injections-amp-amp-reactivity"><a href="#Init-injections-amp-amp-reactivity" class="headerlink" title="Init injections &amp;&amp; reactivity"></a><strong>Init injections &amp;&amp; reactivity</strong></h3><p>initInjections(vm) &amp;&amp; initProvide(vm)  两个方法配套使用，以允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深，并在起上下游关系成立的时间里始终生效，直白点说就是用于将父组件_provided中定义的值，通过inject注入到子组件。provide 和 inject 绑定并不是可响应的。这是刻意为之的。然而，如果你传入了一个可监听的对象，那么其对象的属性还是可响应的。</p>
+<p>initState(vm)  这部分主要是对数据进行操作，props、methods、data、computed、watch </p>
+<h3 id="created"><a href="#created" class="headerlink" title="created()"></a><strong>created()</strong></h3><p>在实例创建完成后被立即调用。在这一步，实例已完成以下的配置：数据观测 (data observer)，属性和方法的运算，watch/event 事件回调。然而，挂载阶段还没开始，$el 属性目前不可见 。</p>
+<p>created执行时：Vue 实例观察的数据对象data已经配置好，已经可以得到app.message的值，但Vue 实例使用的根 DOM 元素el还未初始化。在这个方法中我们可以做一些<strong>数据初始化工作，最常见的就是发送ajax请求来对已经构建完毕的vue对象的静态属性进行一些初始化</strong> </p>
+<h3 id="判断是否有’el‘选项"><a href="#判断是否有’el‘选项" class="headerlink" title="判断是否有’el‘选项"></a>判断是否有’el‘选项</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// vue/src/core/instance/init.js</span><br><span class="line">if (vm.$options.el) &#123;</span><br><span class="line">  vm.$mount(vm.$options.el)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该部分主要是判断是否有‘el’选项，若有则进行“判断是否有template选项”操作，否则进行“vm.$mount(el) is called”操作 。</p>
+<h3 id="Compile-template-into-render-amp-amp-Compile-el’s-outerHTML-as-template"><a href="#Compile-template-into-render-amp-amp-Compile-el’s-outerHTML-as-template" class="headerlink" title="Compile template into render &amp;&amp; Compile el’s outerHTML as template"></a>Compile template into render &amp;&amp; Compile el’s outerHTML as template</h3><p>这部分主要是template进行解析编译。先判断是否有render函数，如果有的话不作处理直接执行mount.call(this, el, hydrating)。如果没有render函数，则获取template，template可以是#id、模版字符串、dom元素，如果没有template，则获取el以及其子内容作为模版</p>
+<h3 id="beforeMount"><a href="#beforeMount" class="headerlink" title="beforeMount()"></a>beforeMount()</h3><p>在挂载开始之前被调用：相关的 render 函数首次被调用。该钩子在服务器端渲染期间不被调用。 </p>
+<p>beforeMount执行时：data和el均已经初始化，但从等现象可以看出此时el并没有渲染进数据，el的值为“虚拟”的元素节点 。 这个过程就是根据编译以后产生的虚拟dom结构来构造一个真实的dom结构， 注意虚拟dom只表示数据结构，真实的dom可以直接添加到html文档结构中来渲染一个效果。 在这期间，Vue还要做一件非常重要的事情就是<strong>通过Vue自己的方式来标识每一个真实的dom节点</strong>，我们在vue里一般都是通过<code>$els</code>或者<code>$refs</code>来操作对应的dom元素，但是这期间正是标注所有元素的过程，很有可能会出一些意想不到的错误。 </p>
+<h4 id="mountComponent"><a href="#mountComponent" class="headerlink" title="mountComponent"></a>mountComponent</h4><p>在mountComponent()方法中调用了beforeMount钩子，然后在updateComponent中调用了vm._render()，最后返回vm对象</p>
+<p>mountComponent在Vue的$mount方法中使用：</p>
+<h3 id="mounted"><a href="#mounted" class="headerlink" title="mounted()"></a>mounted()</h3><p>el被新创建的<code>vm.$el</code>替换，并挂载到实例上去之后调用该钩子。如果root实例挂载了一个文档内元素，当mounted被调用时<code>vm.$el</code>也在文档内。</p>
+<p>.mounted执行时：此时el已经渲染完成并挂载到实例上 。在这里我们就可以完成一些对于真实dom的操作，不论是直接访问dom的属性内容或者事件的绑定，都可以在这里放心大胆的做了，一般情况下我们不需要直接操作dom，Vue也不推荐这么做，但是这里你需要知道的是如果你有这种需求，完全可以在这里完成，<strong>挂载的过程就是将生成的真实DOM对象append到挂载点下面</strong>，就是appendChild的过程，这个时候的虚拟dom结构跟生成出来的real dom结构一模一样，我们以后要操作的就是这个虚拟dom结构，就是前面根据模版生成出来的dom数据结构。 </p>
+<h4 id="mountComponent-1"><a href="#mountComponent-1" class="headerlink" title="mountComponent"></a>mountComponent</h4><p>判断如果vm.$vnode == null，则设置vm._isMounted = true并调用mounted钩子函数 </p>
+<h3 id="beforeUpdate"><a href="#beforeUpdate" class="headerlink" title="beforeUpdate()"></a>beforeUpdate()</h3><p>数据更新时调用，发生在虚拟DOM打补丁之前。这里适合在更新之前访问现有的DOM，比如手动移除已添加的事件监听器。 </p>
+<p>beforeUpdate和updated触发时，el中的数据都已经渲染完成，但只有updated钩子被调用时候，组件dom才被更新。</p>
+<p> <strong>beforeUpdate这个方法在整个生命周期之中也只被调用一次</strong>，在做什么呢，想一想上面所做的事情，上面是根据模版构造出来一个真实的dom对象，到现在他并没有跟我们的vue实例对象扯上关系，怎么通过我们的vue实例来影响到真实的dom对象呢，怎么把我们的数据绑定的真实dom当中了，以后我们只需要操作数据就可以影响到dom结构的渲染呢？<strong>在这个方法里，Vue同样依据前面的规则根据vue实例提供的数据在模版中的位置来重新生成一个虚拟dom数据结构</strong>，没错，你没看错，<strong>我们要生成两个虚拟dom，前一个dom只是dom结构，并没有绑定我们vue的属性数据，这一个dom是绑定了我们vue实例数据的dom结构，在这个dom生成的过程中，vue根据自己的语法规则，对比如指令，表达式之类的东西进行替换，生成一个新的虚拟dom结构</strong>，接下来我们要做什么，我想大家应该所料不错，没错，就是进行比较两个虚拟dom之间存在的差异。 </p>
+<h4 id="mountComponent-2"><a href="#mountComponent-2" class="headerlink" title="mountComponent"></a>mountComponent</h4><p>监测数据发生了变化，并且已经dom被挂载了之后，调用beforeUpdate钩子 </p>
+<h4 id="vm-update"><a href="#vm-update" class="headerlink" title="vm._update"></a>vm._update</h4><p>调用beforeUpdate钩子之后对虚拟dom重新渲染和补丁 </p>
+<h3 id="updated"><a href="#updated" class="headerlink" title="updated()"></a>updated()</h3><p>由于数据更改导致的虚拟DOM重新渲染和打补丁，在这之后会调用该钩子。 当这个钩子被调用时，组件DOM已经更新，所以你现在可以执行依赖于DOM的操作。然而在大多数情况下，你应该避免在此期间更改状态。如果要相应状态改变，通常最好使用计算属性或watcher取而代之。</p>
+<p> 队列执行完Watcher数组的update方法后调用了updated钩子，然后再是调用mounted钩子 .</p>
+<p><strong>update这个方法在我们整个生命周期之内会反复调用</strong>，你会发现，<strong>每一次对vue对象的变更都会触发update方法</strong>，<strong>他就是在反复的生成一个virtual dom</strong>，生成的新dom不断跟之前的dom结构进行比对，也就是<strong>differ算法</strong>，前面说过，<strong>Vue在beforeMount的时候会对每一个dom节点进行标记，就是为了更加快速准确的定位dom节点。</strong></p>
+<p>用一种更加清楚明了的总结方式就是代码：</p>
+<p>// 1. 构建虚拟DOM<br>var tree = el(‘div’, {‘id’: ‘container’}, [<br>el(‘h1’, {style: ‘color: blue’}, [‘simple virtal dom’]),<br>el(‘p’, [‘Hello, virtual-dom’]),<br>el(‘ul’, [el(‘li’)])<br>])<br>// 2. 通过虚拟DOM构建真正的DOM<br>var root = tree.render()<br>document.body.appendChild(root)<br>// 3. 生成新的虚拟DOM<br>var newTree = el(‘div’, {‘id’: ‘container’}, [<br>el(‘h1’, {style: ‘color: red’}, [‘simple virtal dom’]),<br>el(‘p’, [‘Hello, virtual-dom’]),<br>el(‘ul’, [el(‘li’), el(‘li’)])<br>])<br>// 4. 比较两棵虚拟DOM树的不同<br>var patches = diff(tree, newTree)<br>// 5. 在真正的DOM元素上应用变更<br>patch(root, patches)</p>
+<h3 id="beforeDestory"><a href="#beforeDestory" class="headerlink" title="beforeDestory()"></a>beforeDestory()</h3><p>实例销毁之前调用。在这一步，实例仍然完全可用。该钩子在服务器端渲染期间不被调用。 </p>
+<p>vm.$destory() is called时被调用 .</p>
+<h3 id="destroyed"><a href="#destroyed" class="headerlink" title="destroyed()"></a>destroyed()</h3><p>Vue实例销毁后调用。调用后，Vue实例指示的所有东西都会解绑定，所有的事件监听器会被移除，所有的子实例也会被销毁。 </p>
+<p>这部分销毁Vue实例，将各种配置清空和移除。移除Watchers、child、events。 </p>
+<p>.对Vue实例进行销毁，调用app.$destroy()方法即可将其销毁 ,发现实例依然存在，但是此时变化已经发生在了其他地方，根据官方文档描述：Vue 实例指示的所有东西都会解绑定，所有的事件监听器会被移除，所有的子实例也会被销毁。 如果你在子组件也加入destroyed钩子，发现该钩子也会被触发，这也证明了子实例也会被一起销毁。<strong>这里的销毁并不指代’抹去’，而是表示’解绑’</strong>。</p>
+<p>主要参考： <a href="https://juejin.im/post/5b02de32f265da0b9265e655" target="_blank" rel="noopener">vue生命周期解析</a>   <a href="https://zhuanlan.zhihu.com/p/26291416" target="_blank" rel="noopener">VUE生命周期理解</a>    <a href="https://blog.csdn.net/qq_25186543/article/details/79470184" target="_blank" rel="noopener">Vue.js2.0生命周期的研究与理解</a></p>
+<h2 id="补充说说虚拟dom为什么很快"><a href="#补充说说虚拟dom为什么很快" class="headerlink" title="补充说说虚拟dom为什么很快"></a><strong>补充说说虚拟dom为什么很快</strong></h2><ul>
+<li>JavaScript执行速度很快</li>
+<li>Dom操作很慢</li>
+</ul>
+<p>Chrome刚出来的时候，在Chrome里跑Javascript非常快，给了其它浏览器很大压力。而现在经过几轮你追我赶，各主流浏览器的Javascript执行速度都很快了。但是遗憾的是浏览器厂商只对Javascript引擎进行也极限优化，但是对html文档结构的构建速度和css样式的渲染并没有多少进步，就是说dom引擎和css引擎的发展速度远远更不上js引擎解析js脚本的速度，因为js很多时候都是为了操作dom节点和修饰dom，由于html文档结构重新排布的速度远远没有js执行速度快，这在很多时候就造成了难以理解的逻辑错误，称为难以言说的痛。于是在这种情况下，虚拟dom应用而生了，虚拟dom说白了就是一个js结构的对象，他内部的数据组织方式是按照html文档结构组成的树状结构，我们通过每一次数据的修改来重新构造一个js对象，根据前后对象之间的比对就可以发现具体那个节点发生了变化，然后在真实的dom结构中迅速的定位到元素，进行修改，最小化真实dom的重排和重绘。如果你通过原声js，每次修改dom结构或者内容，你必须从头到尾进行dom节点遍历，造成很大的时间和资源的浪费，这是一点，还有一点就是每一次dom操作导致的结构重新排布，所以最好的dom操作方式是一次性把要修改的东西全部做完，进行一次性行更新。而虚拟dom做到了这一点，尽量少操作dom，尽量最小化dom操作，尽量一次性操作dom，尽量不去查询dom。</p>
+<p>主要参考：  <a href="https://zhuanlan.zhihu.com/p/26291416" target="_blank" rel="noopener">VUE生命周期理解</a></p>
+<h2 id="面试时生命周期全过程描述"><a href="#面试时生命周期全过程描述" class="headerlink" title="面试时生命周期全过程描述"></a><strong>面试时生命周期全过程描述</strong></h2><p>在谈到Vue的生命周期的时候，我们首先需要创建一个实例，也就是在 new Vue ( ) 的对象过程当中，首先执行了init（init是vue组件里面默认去执行的），在init的过程当中首先调用了beforeCreate，然后在injections（注射）和reactivity（反应性）的时候，它会再去调用created。所以在init的时候，事件已经调用了，我们在beforeCreate的时候千万不要去修改data里面赋值的数据，最早也要放在created里面去做（添加一些行为）。</p>
+<p>当created完成之后，它会去判断instance（实例）里面是否含有“el”option（选项），如果没有的话，它会调用vm.$mount(el)这个方法，然后执行下一步；如果有的话，直接执行下一步。紧接着会判断是否含有“template”这个选项，如果有的话，它会把template解析成一个render function ，这是一个template编译的过程，结果是解析成了render函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">render (h) &#123;</span><br><span class="line">  return h(&apos;div&apos;, &#123;&#125;, this.text)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解释一下，render函数里面的传参h就是Vue里面的createElement方法，return返回一个createElement方法，其中要传3个参数，第一个参数就是创建的div标签；第二个参数传了一个对象，对象里面可以是我们组件上面的props，或者是事件之类的东西；第三个参数就是div标签里面的内容，这里我们指向了data里面的text。</p>
+<p>使用render函数的结果和我们之前使用template解析出来的结果是一样的。<strong>render函数是发生在beforeMount和mounted之间的</strong>，这也从侧面说明了，在beforeMount的时候，$el还只是我们在HTML里面写的节点，然后到mounted的时候，它就把渲染出来的内容挂载到了DOM节点上。这中间的过程其实是执行了render function的内容。</p>
+<p>在使用.vue文件开发的过程当中，我们在里面写了template模板，在经过了vue-loader的处理之后，就变成了render function，最终放到了vue-loader解析过的文件里面。这样做有什么好处呢？原因是由于在解析template变成render function的过程，是一个非常耗时的过程，vue-loader帮我们处理了这些内容之后，当我们在页面上执行vue代码的时候，效率会变得更高。</p>
+<p>beforeMount在有了render function的时候才会执行，当执行完render function之后，就会调用mounted这个钩子，在mounted挂载完毕之后，这个实例就算是走完流程了。</p>
+<p>后续的钩子函数执行的过程都是需要外部的触发才会执行。比如说有数据的变化，会调用beforeUpdate，然后经过Virtual DOM，最后updated更新完毕。当组件被销毁的时候，它会调用beforeDestory，以及destoryed。</p>
+<p>这就是vue实例从新建到销毁的一个完整流程，以及在这个过程中它会触发哪些生命周期的钩子函数。那说到这儿，可能很多童鞋会问，钩子函数是什么意思？</p>
+<p>钩子函数，其实和回调是一个概念，当系统执行到某处时，检查是否有hook，有则回调。说的更直白一点，每个组件都有属性，方法和事件。所有的生命周期都归于事件，在某个时刻自动执行。 </p>
+<p>参考：<a href="https://segmentfault.com/a/1190000014376915" target="_blank" rel="noopener">如何解释vue的生命周期才能令面试官满意？</a></p>
+<h2 id="参考资料汇总"><a href="#参考资料汇总" class="headerlink" title="参考资料汇总"></a>参考资料汇总</h2><p> <a href="https://juejin.im/post/5b02de32f265da0b9265e655" target="_blank" rel="noopener">vue生命周期解析</a>  </p>
+<p><a href="https://zhuanlan.zhihu.com/p/26291416" target="_blank" rel="noopener">VUE生命周期理解</a></p>
+<p><a href="https://segmentfault.com/a/1190000014376915" target="_blank" rel="noopener">如何解释vue的生命周期才能令面试官满意？</a></p>
+<p>  <a href="https://blog.csdn.net/Coder_Chang/article/details/78758537" target="_blank" rel="noopener">vue生命周期、钩子理解</a></p>
+<p><a href="https://blog.csdn.net/qq_25186543/article/details/79470184" target="_blank" rel="noopener">Vue.js2.0生命周期的研究与理解</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="hjia 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="hjia 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    hjia
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://julyjia.github.io/2018/07/20/vue生命周期详解/" title="vue生命周期详解">https://julyjia.github.io/2018/07/20/vue生命周期详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vue生命周期/" rel="tag"># vue生命周期</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/09/gulp学习笔记总结/" rel="next" title="gulp学习笔记总结">
+                <i class="fa fa-chevron-left"></i> gulp学习笔记总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/24/javascript中for-in与for-of的区别/" rel="prev" title="javascript中for...in与for...of的区别">
+                javascript中for...in与for...of的区别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="hjia">
+            
+              <p class="site-author-name" itemprop="name">hjia</p>
+              <p class="site-description motion-element" itemprop="description">每天进步一点点</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/julyjia" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://stackoverflow.com/users/9992216/jia-hu" target="_blank" title="StackOverflow">
+                      
+                        <i class="fa fa-fw fa-stack-overflow"></i>StackOverflow</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#生命周期图"><span class="nav-number">1.</span> <span class="nav-text">生命周期图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生命周期图中名词解释"><span class="nav-number">2.</span> <span class="nav-text">生命周期图中名词解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#callHook"><span class="nav-number">2.1.</span> <span class="nav-text">callHook</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new-Vue"><span class="nav-number">2.2.</span> <span class="nav-text">new Vue()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Vue对象，通过构造函数的形式创建"><span class="nav-number">2.3.</span> <span class="nav-text">创建Vue对象，通过构造函数的形式创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#this-init"><span class="nav-number">2.4.</span> <span class="nav-text">this._init()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Init-Events-amp-amp-Lifecycle"><span class="nav-number">2.5.</span> <span class="nav-text">Init Events &amp;&amp; Lifecycle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#beforeCreate"><span class="nav-number">2.6.</span> <span class="nav-text">beforeCreate()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Init-injections-amp-amp-reactivity"><span class="nav-number">2.7.</span> <span class="nav-text">Init injections &amp;&amp; reactivity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#created"><span class="nav-number">2.8.</span> <span class="nav-text">created()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判断是否有’el‘选项"><span class="nav-number">2.9.</span> <span class="nav-text">判断是否有’el‘选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Compile-template-into-render-amp-amp-Compile-el’s-outerHTML-as-template"><span class="nav-number">2.10.</span> <span class="nav-text">Compile template into render &amp;&amp; Compile el’s outerHTML as template</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#beforeMount"><span class="nav-number">2.11.</span> <span class="nav-text">beforeMount()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mountComponent"><span class="nav-number">2.11.1.</span> <span class="nav-text">mountComponent</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mounted"><span class="nav-number">2.12.</span> <span class="nav-text">mounted()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mountComponent-1"><span class="nav-number">2.12.1.</span> <span class="nav-text">mountComponent</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#beforeUpdate"><span class="nav-number">2.13.</span> <span class="nav-text">beforeUpdate()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mountComponent-2"><span class="nav-number">2.13.1.</span> <span class="nav-text">mountComponent</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vm-update"><span class="nav-number">2.13.2.</span> <span class="nav-text">vm._update</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#updated"><span class="nav-number">2.14.</span> <span class="nav-text">updated()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#beforeDestory"><span class="nav-number">2.15.</span> <span class="nav-text">beforeDestory()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#destroyed"><span class="nav-number">2.16.</span> <span class="nav-text">destroyed()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充说说虚拟dom为什么很快"><span class="nav-number">3.</span> <span class="nav-text">补充说说虚拟dom为什么很快</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面试时生命周期全过程描述"><span class="nav-number">4.</span> <span class="nav-text">面试时生命周期全过程描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料汇总"><span class="nav-number">5.</span> <span class="nav-text">参考资料汇总</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hjia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'CxUd26OneXS6046S0VeXA15o-gzGzoHsz',
+        appKey: '0qvDV8MhPOJ7UT6RMiJMQYfd',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

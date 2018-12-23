@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="数据类型,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="hjia's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="javascript中有6中简单数据类型（也称为基本数据类型）：Undefied，Null，Boolean，Number，String，Symbol（ES6新增）和一种复杂数据类型——Object。 其中 JS 的数字类型是浮点类型的，没有整型。并且浮点类型基于 IEEE 754标准实现，在使用中会遇到某些 Bug。NaN 也属于 number 类型，并且 NaN 不等于自身。 对于基本类型来说，">
+<meta name="keywords" content="数据类型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="javascript数据类型">
+<meta property="og:url" content="https://julyjia.github.io/2018/08/26/javascript数据类型/index.html">
+<meta property="og:site_name" content="hjia&#39;s Blog">
+<meta property="og:description" content="javascript中有6中简单数据类型（也称为基本数据类型）：Undefied，Null，Boolean，Number，String，Symbol（ES6新增）和一种复杂数据类型——Object。 其中 JS 的数字类型是浮点类型的，没有整型。并且浮点类型基于 IEEE 754标准实现，在使用中会遇到某些 Bug。NaN 也属于 number 类型，并且 NaN 不等于自身。 对于基本类型来说，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-08-26T15:33:05.032Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="javascript数据类型">
+<meta name="twitter:description" content="javascript中有6中简单数据类型（也称为基本数据类型）：Undefied，Null，Boolean，Number，String，Symbol（ES6新增）和一种复杂数据类型——Object。 其中 JS 的数字类型是浮点类型的，没有整型。并且浮点类型基于 IEEE 754标准实现，在使用中会遇到某些 Bug。NaN 也属于 number 类型，并且 NaN 不等于自身。 对于基本类型来说，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'julyjia'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://julyjia.github.io/2018/08/26/javascript数据类型/">
+
+
+
+
+
+  <title>javascript数据类型 | hjia's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d306ca89ff1819bf590c5e3f820fd918";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">hjia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://julyjia.github.io/2018/08/26/javascript数据类型/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hjia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hjia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">javascript数据类型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-26T20:53:35+08:00">
+                2018-08-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/08/26/javascript数据类型/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/08/26/javascript数据类型/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>javascript中有6中简单数据类型（也称为基本数据类型）：Undefied，Null，Boolean，Number，String，Symbol（ES6新增）和一种复杂数据类型——Object。</p>
+<p>其中 JS 的数字类型是浮点类型的，没有整型。并且浮点类型基于 IEEE 754标准实现，在使用中会遇到某些 <a href="https://yuchengkai.cn/docs/zh/frontend/##%E4%B8%BA%E4%BB%80%E4%B9%88-01--02--03" target="_blank" rel="noopener">Bug</a>。<code>NaN</code> 也属于 <code>number</code> 类型，并且 <code>NaN</code> 不等于自身。</p>
+<p>对于基本类型来说，如果使用字面量的方式，那么这个变量只是个字面量，只有在必要的时候才会转换为对应的类型</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">111</span> <span class="comment">// 这只是字面量，不是 number 类型</span></span><br><span class="line">a.toString() <span class="comment">// 使用时候才会转换为对象类型</span></span><br></pre></td></tr></table></figure>
+<p>对象（Object）是引用类型，在使用过程中会遇到浅拷贝和深拷贝的问题。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = &#123; <span class="attr">name</span>: <span class="string">'FE'</span> &#125;</span><br><span class="line"><span class="keyword">let</span> b = a</span><br><span class="line">b.name = <span class="string">'EF'</span></span><br><span class="line"><span class="built_in">console</span>.log(a.name) <span class="comment">// EF</span></span><br></pre></td></tr></table></figure>
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><h3 id="转Boolean"><a href="#转Boolean" class="headerlink" title="转Boolean"></a>转Boolean</h3><p>在条件判断时，除了 <code>undefined</code>， <code>null</code>， <code>false</code>， <code>NaN</code>， <code>&#39;&#39;</code>， <code>0</code>， <code>-0</code>，其他所有值都转为 <code>true</code>，包括所有对象。</p>
+<h3 id="转Number"><a href="#转Number" class="headerlink" title="转Number"></a>转Number</h3><p>Number()函数的转换规则如下：</p>
+<ul>
+<li>如果是 Boolean 值， true 和 false 将分别被转换为 1 和 0。  </li>
+<li>如果是数字值，只是简单的传入和返回。  </li>
+<li>如果是 null 值，返回 0。  </li>
+<li>如果是 undefined，返回 NaN。  </li>
+<li>如果是字符串，遵循下列规则：  <ul>
+<li>如果字符串中只包含数字（包括前面带正号或负号的情况），则将其转换为十进制数值，即”1” 会变成 1， “123”会变成 123，而”011”会变成 11（注意：前导的零被忽略了）；  </li>
+<li>如果字符串中包含有效的浮点格式，如”1.1”，则将其转换为对应的浮点数值（同样，也会忽 略前导零）；  </li>
+<li>如果字符串中包含有效的十六进制格式，例如”0xf”，则将其转换为相同大小的十进制整 数值；  </li>
+<li>如果字符串是空的（不包含任何字符），则将其转换为 0；  </li>
+<li>如果字符串中包含除上述格式之外的字符，则将其转换为 NaN。  </li>
+</ul>
+</li>
+<li>如果是对象，则调用对象的 valueOf()方法，然后依照前面的规则转换返回的值。如果转换 的结果是 NaN，则调用对象的 toString()方法，然后再次依照前面的规则转换返回的字符 串值。  </li>
+</ul>
+<h3 id="对象转基本类型"><a href="#对象转基本类型" class="headerlink" title="对象转基本类型"></a>对象转基本类型</h3><p>对象在转换基本类型时，首先会调用 <code>valueOf</code> 然后调用 <code>toString</code>。并且这两个方法你是可以重写的。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = &#123;</span><br><span class="line">    valueOf() &#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然你也可以重写 <code>Symbol.toPrimitive</code> ，该方法在转基本类型时调用优先级最高。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = &#123;</span><br><span class="line">  valueOf() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;,</span><br><span class="line">  toString() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'1'</span>;</span><br><span class="line">  &#125;,</span><br><span class="line">  [<span class="built_in">Symbol</span>.toPrimitive]() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">1</span> + a <span class="comment">// =&gt; 3</span></span><br><span class="line"><span class="string">'1'</span> + a <span class="comment">// =&gt; '12'</span></span><br></pre></td></tr></table></figure>
+<h4 id="valueOf-NaN"><a href="#valueOf-NaN" class="headerlink" title="valueOf()"></a>valueOf()</h4><p><code>valueOf()</code> 方法返回指定对象的原始值。如果对象没有原始值，则<code>valueOf</code>将返回对象本身。avaScript的许多内置对象都重写了该函数，以实现更适合自身的功能需要。因此，不同类型对象的valueOf()方法的返回值和返回值类型均可能不同。 </p>
+<table>
+<thead>
+<tr>
+<th><strong>对象</strong></th>
+<th><strong>返回值</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Array</td>
+<td>返回数组对象本身。</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>布尔值。</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>存储的时间是从 1970 年 1 月 1 日午夜开始计的毫秒数 UTC。</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>函数本身。</td>
+</tr>
+<tr>
+<td>Number</td>
+<td>数字值。</td>
+</tr>
+<tr>
+<td>Object</td>
+<td>对象本身。这是默认情况。</td>
+</tr>
+<tr>
+<td>String</td>
+<td>字符串值。</td>
+</tr>
+<tr>
+<td></td>
+<td>Math 和 Error 对象没有 valueOf 方法</td>
+</tr>
+</tbody>
+</table>
+<h4 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString()"></a>toString()</h4><p><code>toString()</code> 方法返回一个表示该对象的字符串。</p>
+<p>每个对象都有一个<code>toString()</code>方法，当该对象被表示为一个文本值时，或者一个对象以预期的字符串方式引用时自动调用。默认情况下，<code>toString()</code>方法被每个<code>Object</code>对象继承。如果此方法在自定义对象中未被覆盖，<code>toString()</code> 返回 “[object <em>type</em>]”，其中<code>type</code>是对象的类型。以下代码说明了这一点：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br><span class="line">o.toString(); <span class="comment">// returns [object Object]</span></span><br></pre></td></tr></table></figure>
+<p>例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>,<span class="number">2</span>].toString(); <span class="comment">//"1,2"</span></span><br><span class="line"></span><br><span class="line">(<span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>)</span>&#123;&#125;).toString();<span class="comment">//"function A()&#123;&#125;"</span></span><br></pre></td></tr></table></figure>
+<h2 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h2><h3 id="布尔操作符"><a href="#布尔操作符" class="headerlink" title="布尔操作符"></a>布尔操作符</h3><h4 id="逻辑非"><a href="#逻辑非" class="headerlink" title="逻辑非"></a>逻辑非</h4><p>逻辑非（！）  操作符首先会将它的操作数转换为一个布尔值，然后再 对其求反。  </p>
+<h4 id="逻辑与"><a href="#逻辑与" class="headerlink" title="逻辑与"></a>逻辑与</h4><p>逻辑与（&amp;&amp;）  操作可以应用于任何类型的操作数，而不仅仅是布尔值。在有一个操作数不是布尔值的情况 下，逻辑与操作就不一定返回布尔值；此时，它遵循下列规则：  </p>
+<ul>
+<li>如果第一个操作数是对象，则返回第二个操作数；  </li>
+<li>如果第二个操作数是对象，则只有在第一个操作数的求值结果为 true 的情况下才会返回该 对象；  </li>
+<li>如果两个操作数都是对象，则返回第二个操作数；  </li>
+<li>如果有一个操作数是 null，则返回 null；  </li>
+<li>如果有一个操作数是 NaN，则返回 NaN；  </li>
+<li>如果有一个操作数是 undefined，则返回 undefined  </li>
+</ul>
+<p>逻辑与操作属于短路操作，即如果第一个操作数能够决定结果，那么就不会再对第二个操作数求值。对于逻辑与操作而言，如果第一个操作数是 false，则无论第二个操作数是什么值，结果都不再可能是 true 了。  </p>
+<p>逻辑或</p>
+<h4 id="逻辑或"><a href="#逻辑或" class="headerlink" title="逻辑或"></a>逻辑或</h4><p> 逻辑或操作符由两个竖线符号（||）表示  ，与逻辑与操作相似，如果有一个操作数不是布尔值，逻辑或也不一定返回布尔值；此时，它遵循下 列规则：  </p>
+<ul>
+<li>如果第一个操作数是对象，则返回第一个操作数  </li>
+<li>如果第一个操作数的求值结果为 false，则返回第二个操作数；  </li>
+<li>如果两个操作数都是对象，则返回第一个操作数；  </li>
+<li>如果两个操作数都是 null，则返回 null；  </li>
+<li>如果两个操作数都是 NaN，则返回 NaN；  </li>
+<li>如果两个操作数都是 undefined，则返回 undefined  </li>
+</ul>
+<p>与逻辑与操作符相似，逻辑或操作符也是短路操作符。也就是说，如果第一个操作数的求值结果为 true，就不会对第二个操作数求值了。  </p>
+<h3 id="一元操作符"><a href="#一元操作符" class="headerlink" title="一元操作符"></a>一元操作符</h3><h4 id="递增和递减操作符"><a href="#递增和递减操作符" class="headerlink" title="递增和递减操作符"></a>递增和递减操作符</h4><p>后置递增和递减与前置递增和递减有一个非常重要的区别，即递增和递减操作是在包含它们的语句被求 值之后才执行的。  这个区别在某些情况下不是什么问题，例如：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var age = 29;</span><br><span class="line">age++;</span><br></pre></td></tr></table></figure>
+<p>把递增操作符放在变量后面并不会改变语句的结果，因为递增是这条语句的唯一操作。但是，当语 句中还包含其他操作时，上述区别就会非常明显了。请看下面的例子：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var num1 = 2;</span><br><span class="line">var num2 = 20;</span><br><span class="line">var num3 = num1-- + num2; // 等于 22</span><br><span class="line">var num4 = num1 + num2; // 等于 21</span><br></pre></td></tr></table></figure>
+<p>所有这 4 个操作符对任何值都适用，也就是它们不仅适用于整数，还可以用于字符串、布尔值、浮 点数值和对象。在应用于不同的值时，递增和递减操作符遵循下列规则。  </p>
+<ul>
+<li>在应用于一个包含有效数字字符的字符串时，先将其转换为数字值，再执行加减 1 的操作。字 符串变量变成数值变量。  </li>
+<li>在应用于一个不包含有效数字字符的字符串时，将变量的值设置为 NaN（第 4 章将详细讨论）。 字符串变量变成数值变量。  </li>
+<li>在应用于布尔值 false 时，先将其转换为 0 再执行加减 1 的操作。布尔值变量变成数值变量。  </li>
+<li>在应用于布尔值 true 时，先将其转换为 1 再执行加减 1 的操作。布尔值变量变成数值变量。  </li>
+<li>在应用于浮点数值时，执行加减 1 的操作。  </li>
+<li>在应用于对象时，先调用对象的 valueOf()方法（第 5 章将详细讨论）以取得一个可供操作的 值。然后对该值应用前述规则。如果结果是 NaN，则在调用 toString()方法后再应用前述规 则。对象变量变成数值变量。  </li>
+</ul>
+<h4 id="一元加和减操作符"><a href="#一元加和减操作符" class="headerlink" title="一元加和减操作符"></a>一元加和减操作符</h4><p>在对非数值应用一元加操作符时，该操作符会像 Number()转型函数一样对这个值执行转换。  </p>
+<p>在将一元减操作符应用于数值时，该值会变成负数（如上面的例子所示）。而当应用于非数值时， 一元减操作符遵循与一元加操作符相同的规则，最后再将得到的数值转换为负数。</p>
+<h3 id="加性操作符"><a href="#加性操作符" class="headerlink" title="加性操作符"></a>加性操作符</h3><p>加法操作符（+）的用法如下所示：  </p>
+<p>如果两个操作符都是数值，执行常规的加法计算，然后根据下列规则返回结果  ：</p>
+<ul>
+<li>如果有一个操作数是 NaN，则结果是 NaN；  </li>
+<li>如果是 Infinity 加 Infinity，则结果是 Infinity；  </li>
+<li>如果是-Infinity 加-Infinity，则结果是-Infinity；  </li>
+<li>如果是 Infinity 加-Infinity，则结果是 NaN；  </li>
+<li>如果是+0 加+0，则结果是+0；  </li>
+<li>如果是-0 加-0，则结果是-0；  </li>
+<li>如果是+0 加-0，则结果是+0。  </li>
+</ul>
+<p>如果有一个操作数是字符串，那么就要应用如下规则：  </p>
+<ul>
+<li><p>如果两个操作数都是字符串，则将第二个操作数与第一个操作数拼接起来；  </p>
+</li>
+<li><p>如果只有一个操作数是字符串，则将另一个操作数转换为字符串，然后再将两个字符串拼接起来。  </p>
+</li>
+</ul>
+<p>如果有一个操作数是对象、数值或布尔值，则调用它们的 toString()方法取得相应的字符串值， 然后再应用前面关于字符串的规则。对于 undefined 和 null，则分别调用 String()函数并取得字符 串”undefined”和”null”。  </p>
+<p>只有当加法运算时，其中一方是字符串类型，就会把另一个也转为字符串类型。其他运算只要其中一方是数字，那么另一方就转为数字。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> + <span class="string">'1'</span> <span class="comment">// '11'</span></span><br><span class="line"><span class="number">2</span> * <span class="string">'2'</span> <span class="comment">// 4</span></span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>] + [<span class="number">2</span>, <span class="number">1</span>] <span class="comment">// '1,22,1'</span></span><br><span class="line"><span class="comment">// [1, 2].toString() -&gt; '1,2'</span></span><br><span class="line"><span class="comment">// [2, 1].toString() -&gt; '2,1'</span></span><br><span class="line"><span class="comment">// '1,2' + '2,1' = '1,22,1'</span></span><br></pre></td></tr></table></figure>
+<p>对于加号需要注意这个表达式 <code>&#39;a&#39; + + &#39;b&#39;</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'a'</span> + + <span class="string">'b'</span> <span class="comment">// -&gt; "aNaN"</span></span><br><span class="line"><span class="comment">// 因为 + 'b' -&gt; NaN</span></span><br><span class="line"><span class="comment">// 你也许在一些代码中看到过 + '1' -&gt; 1</span></span><br></pre></td></tr></table></figure>
+<p>例子：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5</span> – “<span class="number">4</span>” <span class="comment">//1</span></span><br><span class="line"><span class="number">5</span> + “<span class="number">4</span>” <span class="comment">//54</span></span><br><span class="line">+!&#123;&#125;[<span class="literal">true</span>] <span class="comment">//1</span></span><br><span class="line">+[<span class="number">1</span>] <span class="comment">//1</span></span><br><span class="line">+[<span class="number">1</span>, <span class="number">2</span>] <span class="comment">//NaN</span></span><br><span class="line"><span class="number">7</span> – “a” <span class="comment">//NaN</span></span><br><span class="line"><span class="number">7</span> / <span class="number">0</span> <span class="comment">//Infinity</span></span><br><span class="line"></span><br><span class="line"><span class="number">5</span> + “<span class="number">4</span>” <span class="comment">//54</span></span><br><span class="line"><span class="number">5</span> + <span class="literal">null</span> <span class="comment">//5</span></span><br><span class="line"><span class="number">4</span> == “<span class="number">4.00</span>” <span class="comment">//true</span></span><br><span class="line"><span class="number">4</span> === “<span class="number">4.00</span>” <span class="comment">//false</span></span><br><span class="line"><span class="literal">null</span> == <span class="literal">undefined</span> <span class="comment">//true</span></span><br><span class="line"><span class="number">0</span> == <span class="literal">false</span> <span class="comment">//true</span></span><br><span class="line"><span class="number">0</span> == <span class="literal">null</span> <span class="comment">//true</span></span><br><span class="line"><span class="literal">null</span> == <span class="literal">false</span> <span class="comment">//false</span></span><br><span class="line"><span class="literal">undefined</span> == <span class="number">0</span> <span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+<h3 id="乘性操作符"><a href="#乘性操作符" class="headerlink" title="乘性操作符"></a>乘性操作符</h3><p>ECMAScript 定义了 3 个乘性操作符：乘法、除法和求模。  如果参与乘性计算的某 个操作数不是数值，后台会先使用 Number()转型函数将其转换为数值。也就是说，空字符串将被当作 0，布尔值 true 将被当作 1。  </p>
+<h3 id="关系操作符"><a href="#关系操作符" class="headerlink" title="关系操作符"></a>关系操作符</h3><p>小于（&lt;）、大于（&gt;）、小于等于（&lt;=）和大于等于（&gt;=）这几个关系操作符用于对两个值进行比 较，比较的规则与我们在数学课上所学的一样。这几个操作符都返回一个布尔值  。</p>
+<p>与 ECMAScript 中的其他操作符一样，当关系操作符的操作数使用了非数值时，也要进行数据转换 或完成某些奇怪的操作。以下就是相应的规则。  </p>
+<ul>
+<li>如果两个操作数都是数值，则执行数值比较。  </li>
+<li>如果两个操作数都是字符串，则比较两个字符串对应的字符编码值。  </li>
+<li>如果一个操作数是数值，则将另一个操作数转换为一个数值，然后执行数值比较。</li>
+<li>如果一个操作数是对象，则调用这个对象的 valueOf()方法，用得到的结果按照前面的规则执 行比较。如果对象没有 valueOf()方法，则调用 toString()方法，并用得到的结果根据前面 的规则执行比较。  </li>
+<li>如果一个操作数是布尔值，则先将其转换为数值，然后再执行比较。   </li>
+</ul>
+<p>总的来说：</p>
+<ol>
+<li>如果是对象，就通过 <code>toPrimitive</code> 转换对象</li>
+<li>如果是字符串，就通过 <code>unicode</code> 字符索引来比较</li>
+</ol>
+<h3 id="相等操作符"><a href="#相等操作符" class="headerlink" title="相等操作符"></a>相等操作符</h3><p>ECMAScript 的解决方案就是提供两组操作符： 相等和不相等——先转换再比较， 全等和不 全等——仅比较而不转换  。</p>
+<h4 id="相等和不相等"><a href="#相等和不相等" class="headerlink" title="相等和不相等"></a>相等和不相等</h4><p>ECMAScript 中的相等操作符由两个等于号（==）表示，如果两个操作数相等，则返回 true。而不 相等操作符由叹号后跟等于号（!=）表示，如果两个操作数不相等，则返回 true。这两个操作符都会 先转换操作数（通常称为强制转型），然后再比较它们的相等性。  </p>
+<p>在转换不同的数据类型时，相等和不相等操作符遵循下列基本规则：  </p>
+<ul>
+<li>如果有一个操作数是布尔值，则在比较相等性之前先将其转换为数值——false 转换为 0，而 true 转换为 1；  </li>
+<li>如果一个操作数是字符串，另一个操作数是数值，在比较相等性之前先将字符串转换为数值；  </li>
+<li>如果一个操作数是对象，另一个操作数不是，则调用对象的 valueOf()方法，用得到的基本类 型值按照前面的规则进行比较；  </li>
+<li>null 和 undefined 是相等的。  </li>
+<li>要比较相等性之前，不能将 null 和 undefined 转换成其他任何值。  </li>
+<li>如果有一个操作数是 NaN，则相等操作符返回 false，而不相等操作符返回 true。重要提示： 即使两个操作数都是 NaN，相等操作符也返回 false；因为按照规则， NaN 不等于 NaN。  </li>
+<li>如果两个操作数都是对象，则比较它们是不是同一个对象。如果两个操作数都指向同一个对象， 则相等操作符返回 true；否则，返回 false。  </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.23” == 1.23  //true</span><br><span class="line">0 == false  //true</span><br><span class="line">null == undefined //true</span><br><span class="line">new Object() == new Object()  //false</span><br><span class="line">[1, 2] == [1, 2] //false</span><br></pre></td></tr></table></figure>
+<p>Javascript中对象的比较是用引用比较，而不是用值去比较，所以，这里的[1, 2] == [1, 2] //false 因为他们两个不是完全相同的两个对象，我们定义一个对象x，然后让x和x做比较，只有这样才会是true，同样是两个空对象，他们之间也不会相等。</p>
+<h4 id="全等和不全等"><a href="#全等和不全等" class="headerlink" title="全等和不全等"></a>全等和不全等</h4><p>除了在比较之前不转换操作数之外，全等和不全等操作符与相等和不相等操作符没有什么区别。 全 等操作符由 3 个等于号（===）表示，它只在两个操作数未经转换就相等的情况下返回 true 。 </p>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1 == ‘1’ //true</span><br><span class="line">1 === ‘1’ //false</span><br><span class="line">1 + ‘2’ === ‘1’ + 2  //true</span><br><span class="line">1 + ‘2’ === ‘1’ + new Number(2) //true</span><br><span class="line">1 + true === false + 2 //true</span><br><span class="line">1 + null == undefined  + 1 //false</span><br><span class="line">a’ - ‘b’ == ‘b’ - ‘a’//false</span><br></pre></td></tr></table></figure>
+<p><strong>总结：</strong></p>
+<ol>
+<li>对于a === b：</li>
+</ol>
+<ul>
+<li><p>类型不同，返回false</p>
+</li>
+<li><p>类型相同</p>
+<ul>
+<li>NaN ≠ NaN</li>
+<li>new Object ≠ new Object</li>
+<li>null === null</li>
+<li>undefined === undefined</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li>对于a == b：</li>
+</ol>
+<ul>
+<li>类型相同，同===</li>
+<li>类型不同，尝试类型转换和比较:<ul>
+<li>null == undefined 相等</li>
+<li>number == string 转number     <code>1 == “1.0&quot; // true</code></li>
+<li>boolean == ?  转number     <code>1 == true  // true</code></li>
+<li>object == number | string 尝试对象转为基本类型 <code>new String(&#39;hi&#39;) == ‘hi’ // true</code></li>
+<li>其它：false</li>
+</ul>
+</li>
+</ul>
+<p>这里来解析一道题目 <code>[] == ![] // -&gt; true</code> ，下面是这个表达式为何为 <code>true</code> 的步骤</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [] 转成 true，然后取反变成 false</span></span><br><span class="line">[] == <span class="literal">false</span></span><br><span class="line"><span class="comment">// 根据第 8 条得出</span></span><br><span class="line">[] == ToNumber(<span class="literal">false</span>)</span><br><span class="line">[] == <span class="number">0</span></span><br><span class="line"><span class="comment">// 根据第 10 条得出</span></span><br><span class="line">ToPrimitive([]) == <span class="number">0</span></span><br><span class="line"><span class="comment">// [].toString() -&gt; ''</span></span><br><span class="line"><span class="string">''</span> == <span class="number">0</span></span><br><span class="line"><span class="comment">// 根据第 6 条得出</span></span><br><span class="line"><span class="number">0</span> == <span class="number">0</span> <span class="comment">// -&gt; true</span></span><br></pre></td></tr></table></figure>
+<h2 id="包装对象"><a href="#包装对象" class="headerlink" title="包装对象"></a>包装对象</h2><p>为了便于操作基本类型值， ECMAScript 还提供了 3 个特殊的引用类型： Boolean、 Number 和 String。  </p>
+<p>实际上，每当读取一个基本类型值的时候，后台就会创建一个对应的基本包装类型的对象，从而让我们 能够调用一些方法来操作这些数据。来看下面的例子。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var s1 = &quot;some text&quot;;</span><br><span class="line">var s2 = s1.substring(2);</span><br></pre></td></tr></table></figure>
+<p>这个例子中的变量 s1 包含一个字符串，字符串当然是基本类型值。而下一行调用了 s1 的 substring()方法，并将返回的结果保存在了 s2 中。我们知道，基本类型值不是对象，因而从逻辑上 讲它们不应该有方法（尽管如我们所愿，它们确实有方法）。其实，为了让我们实现这种直观的操作， 后台已经自动完成了一系列的处理。当第二行代码访问 s1 时，访问过程处于一种读取模式，也就是要 从内存中读取这个字符串的值。而在读取模式中访问字符串时，后台都会自动完成下列处理。  </p>
+<p>(1) 创建 String 类型的一个实例； (2) 在实例上调用指定的方法； (3) 销毁这个实例  </p>
+<p>可以将以上三个步骤想象成是执行了下列 ECMAScript 代码  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var s1 = new String(&quot;some text&quot;);</span><br><span class="line">var s2 = s1.substring(2);</span><br><span class="line">s1 = null;</span><br></pre></td></tr></table></figure>
+<p>经过此番处理，基本的字符串值就变得跟对象一样了。而且，上面这三个步骤也分别适用于 Boolean 和 Number 类型对应的布尔值和数字值。  </p>
+<p>引用类型与基本包装类型的主要区别就是对象的生存期。使用 new 操作符创建的引用类型的实例， 在执行流离开当前作用域之前都一直保存在内存中。而自动创建的基本包装类型的对象，则只存在于一 行代码的执行瞬间，然后立即被销毁。这意味着我们不能在运行时为基本类型值添加属性和方法。  </p>
+<p>来看 下面的例子：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var s1 = &quot;some text&quot;;</span><br><span class="line">s1.color = &quot;red&quot;;</span><br><span class="line">alert(s1.color); //undefined</span><br></pre></td></tr></table></figure>
+<p>在此，第二行代码试图为字符串 s1 添加一个 color 属性。但是，当第三行代码再次访问 s1 时， 其 color 属性不见了。问题的原因就是第二行创建的 String 对象在执行第三行代码时已经被销毁了。 第三行代码又创建自己的 String 对象，而该对象没有 color 属性。  </p>
+<p>当然，可以显式地调用 Boolean、 Number 和 String 来创建基本包装类型的对象。不过，应该在 绝对必要的情况下再这样做，因为这种做法很容易让人分不清自己是在处理基本类型还是引用类型的 值。对基本包装类型的实例调用 typeof 会返回”object”，而且所有基本包装类型的对象都会被转换 为布尔值 true。  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = “string”;</span><br><span class="line">alert(a.length); <span class="comment">//6</span></span><br><span class="line">a.t = <span class="number">3</span>;</span><br><span class="line">alert(a.t);<span class="comment">//undefined</span></span><br></pre></td></tr></table></figure>
+<p>在javascript中，当尝试将基本类型以对象的方式去使用的时候，比如访问length属性，或者增加属性，javascript会智能的将基本类型转换为对应的包装类型对象，相当于new Sring()，返回的值和字符串值是一样的，当你完成这个访问后，这个临时对象会被销毁掉，所以你之后再输入a.t值为undefined。</p>
+<h2 id="类型检测"><a href="#类型检测" class="headerlink" title="类型检测"></a>类型检测</h2><p>javascript中用于类型检测的方式主要包括：</p>
+<p>typeof和instanceof操作符，Object.prototype.toString方法，constructor属性。</p>
+<h3 id="typeof"><a href="#typeof" class="headerlink" title="typeof"></a>typeof</h3><p><code>typeof</code> 对于基本类型，除了 <code>null</code> 都可以显示正确的类型</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typeof</span> <span class="number">1</span> <span class="comment">// 'number'</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="string">'1'</span> <span class="comment">// 'string'</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="literal">undefined</span> <span class="comment">// 'undefined'</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="literal">true</span> <span class="comment">// 'boolean'</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="built_in">Symbol</span>() <span class="comment">// 'symbol'</span></span><br><span class="line"><span class="keyword">typeof</span> b <span class="comment">// b 没有声明，但是还会显示 undefined</span></span><br><span class="line"><span class="keyword">typeof</span><span class="string">` 对于对象，除了函数都会显示 `</span>object</span><br><span class="line"><span class="keyword">typeof</span> [] <span class="comment">// 'object'</span></span><br><span class="line"><span class="keyword">typeof</span> &#123;&#125; <span class="comment">// 'object'</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="built_in">console</span>.log <span class="comment">// 'function'</span></span><br><span class="line"><span class="keyword">typeof</span>(<span class="keyword">new</span> <span class="built_in">Object</span>() ) === “object”</span><br><span class="line"><span class="keyword">typeof</span>([<span class="number">1</span>， <span class="number">2</span>]) === “object”</span><br><span class="line"><span class="keyword">typeof</span>(<span class="literal">NaN</span>) === “number”</span><br><span class="line"><span class="keyword">typeof</span>(<span class="keyword">typeof</span>(‘string’))  <span class="comment">//'string'</span></span><br></pre></td></tr></table></figure>
+<p>对于 <code>null</code> 来说，虽然它是基本类型，但是会显示 <code>object</code>，这是一个存在很久了的 Bug</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typeof</span> <span class="literal">null</span> <span class="comment">// 'object'</span></span><br></pre></td></tr></table></figure>
+<p>PS：为什么会出现这种情况呢？因为在 JS 的最初版本中，使用的是 32 位系统，为了性能考虑使用低位存储了变量的类型信息，<code>000</code> 开头代表是对象，然而 <code>null</code> 表示为全零，所以将它错误的判断为 <code>object</code>。虽然现在的内部类型判断代码已经改变了，但是对于这个 Bug 却是一直流传下来。</p>
+<p>从逻辑角度来看， null 值表示一个空对象指针，而这也正是使用 typeof 操作符检测 null 值时会返回”object”的原因。</p>
+<p>如果定义的变量准备在将来用于保存对象，那么最好将该变量初始化为 null 而不是其他值。这样 一来，只要直接检查 null 值就可以知道相应的变量是否已经保存了一个对象的引用，如下面的例子所示：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (car != null)&#123;</span><br><span class="line">// 对 car 对象执行某些操作</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上， undefined 值是派生自 null 值的，因此 ECMA-262 规定对它们的相等性测试要返回 true：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert(null == undefined); //true</span><br></pre></td></tr></table></figure>
+<p>如果我们想获得一个变量的正确类型，可以通过 <code>Object.prototype.toString.call(xx)</code>。这样我们就可以获得类似 <code>[Object Type]</code> 的字符串。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a</span><br><span class="line"><span class="comment">// 我们也可以这样判断 undefined</span></span><br><span class="line">a === <span class="literal">undefined</span></span><br><span class="line"><span class="comment">// 但是 undefined 不是保留字，能够在低版本浏览器被赋值</span></span><br><span class="line"><span class="keyword">let</span> <span class="literal">undefined</span> = <span class="number">1</span></span><br><span class="line"><span class="comment">// 这样判断就会出错</span></span><br><span class="line"><span class="comment">// 所以可以用下面的方式来判断，并且代码量更少</span></span><br><span class="line"><span class="comment">// 因为 void 后面随便跟上一个组成表达式</span></span><br><span class="line"><span class="comment">// 返回就是 undefined</span></span><br><span class="line">a === <span class="keyword">void</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h3 id="instanceof"><a href="#instanceof" class="headerlink" title="instanceof"></a>instanceof</h3><p><code>instanceof</code> <strong>运算符</strong>用来测试一个对象在其原型链中是否存在一个构造函数的 <code>prototype</code> 属性。</p>
+<p>语法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">object instanceof constructor</span><br></pre></td></tr></table></figure>
+<p>用来检测 <code>constructor.prototype</code>是否存在于参数 <code>object</code> 的原型链上。</p>
+<p>但是<strong>不同window或iframe间的对象类型检测不能使用instanceof！</strong></p>
+<p>在浏览器中，我们的脚本可能需要在多个窗口之间进行交互。多个窗口意味着多个全局环境，不同的全局环境拥有不同的全局对象，从而拥有不同的内置类型构造函数。这可能会引发一些问题。比如，表达式 <code>[] instanceof window.frames[0].Array</code> 会返回<code>false</code>，因为 <code>Array.prototype !== window.frames[0].Array.prototype</code>，并且数组从前者继承。</p>
+<p>起初，你会认为这样并没有意义，但是当你在你的脚本中开始处理多个frame或多个window以及通过函数将对象从一个窗口传到另一个窗口时，这就是一个有效而强大的话题。比如，实际上你可以通过使用 <code>Array.isArray(myObj)</code> 或者<code>Object.prototype.toString.call(myObj) === &quot;[object Array]&quot;</code>来安全的检测传过来的对象是否是一个数组。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>, <span class="number">2</span>] <span class="keyword">instanceof</span> <span class="built_in">Array</span> === <span class="literal">true</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Object</span>() <span class="keyword">instanceof</span> <span class="built_in">Array</span> === <span class="literal">false</span></span><br><span class="line"><span class="literal">null</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span> <span class="comment">//false</span></span><br><span class="line">[<span class="literal">null</span>] <span class="keyword">instanceof</span> <span class="built_in">Object</span> <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Student</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">Student.prototype = <span class="keyword">new</span> Person()</span><br><span class="line">Student.prototype.constructor = student</span><br><span class="line"><span class="keyword">var</span> bosn = <span class="keyword">new</span> Student()</span><br><span class="line">bosn <span class="keyword">instanceof</span> Studeng <span class="comment">//true</span></span><br><span class="line"><span class="keyword">var</span> one = <span class="keyword">new</span> Person()</span><br><span class="line">one <span class="keyword">instanceof</span> Person <span class="comment">//true</span></span><br><span class="line">one <span class="keyword">instanceof</span> Student <span class="comment">//false</span></span><br><span class="line">bosn <span class="keyword">instanceof</span> Person <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+<h3 id="Object-prototype-toString"><a href="#Object-prototype-toString" class="headerlink" title="Object.prototype.toString"></a>Object.prototype.toString</h3><p>在任何值上调用 Object 原生的 toString()方法，都会返回一个[object NativeConstructorName]格式的字符串。每个类在内部都有一个[[Class]]属 性，这个属性中就指定了上述字符串中的构造函数名。举个例子吧。  </p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> value = [<span class="number">1</span>, <span class="number">2</span>];</span><br><span class="line">alert(<span class="built_in">Object</span>.prototype.toString.call(value)); <span class="comment">//"[object Array]"</span></span><br></pre></td></tr></table></figure>
+<p>由于原生数组的构造函数名与全局作用域无关，因此使用 toString()就能保证返回一致的值。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.prototype.toString.apply([]);<span class="comment">// === “[object Array]”;</span></span><br><span class="line"><span class="built_in">Object</span>.prototype.toString.apply(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;); <span class="comment">//=== “[object Function]”;</span></span><br><span class="line"><span class="built_in">Object</span>.prototype.toString.apply(<span class="literal">null</span>); <span class="comment">//=== “[object Null]”</span></span><br><span class="line"><span class="built_in">Object</span>.prototype.toString.apply(<span class="literal">undefined</span>); <span class="comment">//=== “[object Undefined]”</span></span><br><span class="line">IE6/<span class="number">7</span>/<span class="number">8</span> <span class="built_in">Object</span>.prototype.toString.apply(<span class="literal">null</span>) 返回”[object <span class="built_in">Object</span>]”</span><br><span class="line"><span class="built_in">Object</span>.prototype.toString.apply(<span class="keyword">new</span> <span class="built_in">Date</span>); <span class="comment">// [object Date]</span></span><br><span class="line"><span class="built_in">Object</span>.prototype.toString.call(<span class="built_in">Math</span>); <span class="comment">// [object Math]</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.prototype.toString.apply([]).slice(<span class="number">8</span>, <span class="number">-1</span>);<span class="comment">//"Array"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#125;.toString.apply(<span class="keyword">new</span> <span class="built_in">String</span>(‘str’)); <span class="comment">//“[object String]”</span></span><br><span class="line">&#123;&#125;.toString.apply(‘str’); <span class="comment">//“[object String]”</span></span><br><span class="line">test”.substring(<span class="number">0</span> ,<span class="number">1</span>) <span class="comment">//'t'</span></span><br></pre></td></tr></table></figure>
+<h3 id="constructor-NaN"><a href="#constructor-NaN" class="headerlink" title="constructor"></a>constructor</h3><p>返回创建实例对象的 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank" rel="noopener"><code>Object</code></a> 构造函数的引用。注意，此属性的值是对函数本身的引用，而不是一个包含函数名称的字符串。对原始类型来说，如<code>1</code>，<code>true</code>和<code>&quot;test&quot;</code>，该值只可读。</p>
+<p>所有对象都会从它的原型上继承一个 <code>constructor</code> 属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">var o = &#123;&#125;;</span><br><span class="line">o.constructor === Object; // true</span><br><span class="line"></span><br><span class="line">var o = new Object;</span><br><span class="line">o.constructor === Object; // true</span><br><span class="line"></span><br><span class="line">var a = [];</span><br><span class="line">a.constructor === Array; // true</span><br><span class="line"></span><br><span class="line">var a = new Array;</span><br><span class="line">a.constructor === Array // true</span><br><span class="line"></span><br><span class="line">var n = new Number(3);</span><br><span class="line">n.constructor === Number; // true</span><br></pre></td></tr></table></figure>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>typeof：适合基本类型及function检测，遇到null失效。</p>
+<p>instanceof：适合自定义对象，也可以用来检测原生对象，在不同iframe和window间检测时失效。</p>
+<p>[[Class]]：通过{}.toString拿到，适合内置对象和基元类型，遇到null和undefined失效(IE678等返回[object<br>Object])。</p>
+<h2 id="运算符优先级"><a href="#运算符优先级" class="headerlink" title="运算符优先级"></a>运算符优先级</h2><p>运算符的优先级决定了表达式中运算执行的先后顺序，优先级高的运算符最先被执行。</p>
+<h3 id="结合性"><a href="#结合性" class="headerlink" title="结合性"></a>结合性</h3><p>结合性决定了拥有相同优先级的运算符的执行顺序。考虑下面这个表达式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a OP b OP c</span><br></pre></td></tr></table></figure>
+<p>左结合（左到右）相当于把左边的子表达式加上小括号<code>(a OP b) OP c</code>，右关联（右到左）相当于<code>a OP (b OP c)</code>。赋值运算符是右关联的，所以你可以这么写：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = b = 5;</span><br></pre></td></tr></table></figure>
+<p>结果 <code>a</code> 和 <code>b</code> 的值都会成为5。这是因为赋值运算符的返回结果就是赋值运算符右边的那个值，具体过程是：<code>b</code>被赋值为5，然后<code>a</code>也被赋值为 <code>b=5</code> 的返回值，也就是5。</p>
+<h3 id="汇总表"><a href="#汇总表" class="headerlink" title="汇总表"></a>汇总表</h3><p>下面的表将所有运算符按照优先级的不同从高到低排列。</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>运算类型</th>
+<th>关联性</th>
+<th>运算符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Grouping" target="_blank" rel="noopener"><code>圆括号</code></a></td>
+<td>n/a</td>
+<td><code>( … )</code></td>
+</tr>
+<tr>
+<td>19</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Property_Accessors#%E7%82%B9%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%A4%BA%E6%B3%95" target="_blank" rel="noopener"><code>成员访问</code></a></td>
+<td>从左到右</td>
+<td><code>… . …</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Property_Accessors#%E6%8B%AC%E5%8F%B7%E8%A1%A8%E7%A4%BA%E6%B3%95" target="_blank" rel="noopener"><code>需计算的成员访问</code></a></td>
+<td>从左到右</td>
+<td><code>… [ … ]</code></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new" target="_blank" rel="noopener"><code>new</code></a> (带参数列表)</td>
+<td>n/a</td>
+<td><code>new … ( … )</code></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Functions" target="_blank" rel="noopener">函数调用</a></td>
+<td>从左到右</td>
+<td><code>… ( … )</code></td>
+<td></td>
+</tr>
+<tr>
+<td>18</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new" target="_blank" rel="noopener">new</a> (无参数列表)</td>
+<td>从右到左</td>
+<td><code>new …</code></td>
+</tr>
+<tr>
+<td>17</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Increment" target="_blank" rel="noopener">后置递增</a>(运算符在后)</td>
+<td>n/a</td>
+<td><code>… ++</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Decrement" target="_blank" rel="noopener">后置递减</a>(运算符在后)</td>
+<td><code>… --</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>16</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_NOT" target="_blank" rel="noopener">逻辑非</a></td>
+<td>从右到左</td>
+<td><code>! …</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_NOT" target="_blank" rel="noopener">按位非</a></td>
+<td><code>~ …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Unary_plus" target="_blank" rel="noopener">一元加法</a></td>
+<td><code>+ …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Unary_negation" target="_blank" rel="noopener">一元减法</a></td>
+<td><code>- …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Increment" target="_blank" rel="noopener">前置递增</a></td>
+<td><code>++ …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Decrement" target="_blank" rel="noopener">前置递减</a></td>
+<td><code>-- …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/typeof" target="_blank" rel="noopener">typeof</a></td>
+<td><code>typeof …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/void" target="_blank" rel="noopener">void</a></td>
+<td><code>void …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/delete" target="_blank" rel="noopener">delete</a></td>
+<td><code>delete …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await" target="_blank" rel="noopener">await</a></td>
+<td><code>await …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>15</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Exponentiation" target="_blank" rel="noopener">幂</a></td>
+<td>从右到左</td>
+<td><code>… ** …</code></td>
+</tr>
+<tr>
+<td>14</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Multiplication" target="_blank" rel="noopener">乘法</a></td>
+<td>从左到右</td>
+<td><code>… * …</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Division" target="_blank" rel="noopener">除法</a></td>
+<td><code>… / …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Remainder" target="_blank" rel="noopener">取模</a></td>
+<td><code>… % …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Addition" target="_blank" rel="noopener">加法</a></td>
+<td>从左到右</td>
+<td><code>… + …</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Subtraction" target="_blank" rel="noopener">减法</a></td>
+<td><code>… - …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators" target="_blank" rel="noopener">按位左移</a></td>
+<td>从左到右</td>
+<td><code>… &lt;&lt; …</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators" target="_blank" rel="noopener">按位右移</a></td>
+<td><code>… &gt;&gt; …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators" target="_blank" rel="noopener">无符号右移</a></td>
+<td><code>… &gt;&gt;&gt; …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Less_than_operator" target="_blank" rel="noopener">小于</a></td>
+<td>从左到右</td>
+<td><code>… &lt; …</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Less_than__or_equal_operator" target="_blank" rel="noopener">小于等于</a></td>
+<td><code>… &lt;= …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Greater_than_operator" target="_blank" rel="noopener">大于</a></td>
+<td><code>… &gt; …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Greater_than_or_equal_operator" target="_blank" rel="noopener">大于等于</a></td>
+<td><code>… &gt;= …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/in" target="_blank" rel="noopener">in</a></td>
+<td><code>… in …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/instanceof" target="_blank" rel="noopener">instanceof</a></td>
+<td><code>… instanceof …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Equality" target="_blank" rel="noopener">等号</a></td>
+<td>从左到右</td>
+<td><code>… == …</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Inequality" target="_blank" rel="noopener">非等号</a></td>
+<td><code>… != …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Identity" target="_blank" rel="noopener">全等号</a></td>
+<td><code>… === …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Nonidentity" target="_blank" rel="noopener">非全等号</a></td>
+<td><code>… !== …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_AND" target="_blank" rel="noopener">按位与</a></td>
+<td>从左到右</td>
+<td><code>… &amp; …</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_XOR" target="_blank" rel="noopener">按位异或</a></td>
+<td>从左到右</td>
+<td><code>… ^ …</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_OR" target="_blank" rel="noopener">按位或</a></td>
+<td>从左到右</td>
+<td>`…</td>
+<td>…`</td>
+</tr>
+<tr>
+<td>6</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_AND" target="_blank" rel="noopener">逻辑与</a></td>
+<td>从左到右</td>
+<td><code>… &amp;&amp; …</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_OR" target="_blank" rel="noopener">逻辑或</a></td>
+<td>从左到右</td>
+<td>`…</td>
+<td></td>
+<td>…`</td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Conditional_Operator" target="_blank" rel="noopener">条件运算符</a></td>
+<td>从右到左</td>
+<td><code>… ? … : …</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Assignment_Operators" target="_blank" rel="noopener">赋值</a></td>
+<td>从右到左</td>
+<td><code>… = …</code></td>
+</tr>
+<tr>
+<td><code>… += …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… -= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… *= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… /= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… %= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… &lt;&lt;= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… &gt;&gt;= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… &gt;&gt;&gt;= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… &amp;= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>… ^= …</code></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>`…</td>
+<td>= …`</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/yield" target="_blank" rel="noopener">yield</a></td>
+<td>从右到左</td>
+<td><code>yield …</code></td>
+</tr>
+<tr>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/yield*" target="_blank" rel="noopener">yield*</a></td>
+<td><code>yield* …</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Spread_operator" target="_blank" rel="noopener">展开运算符</a></td>
+<td>n/a</td>
+<td><code>...</code> …</td>
+</tr>
+<tr>
+<td>0</td>
+<td><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comma_Operator" target="_blank" rel="noopener">逗号</a></td>
+<td>从左到右</td>
+<td><code>… , …</code></td>
+</tr>
+</tbody>
+</table>
+<p>参考资料：</p>
+<p>JS高级程序设计</p>
+<p><a href="https://yuchengkai.cn/docs/zh/frontend/#%E5%86%85%E7%BD%AE%E7%B1%BB%E5%9E%8B" target="_blank" rel="noopener">interviewmap</a></p>
+<p><a href="https://www.imooc.com/learn/277" target="_blank" rel="noopener">javascript深入浅出</a></p>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence" target="_blank" rel="noopener">运算符优先级-mdn</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="hjia 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="hjia 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    hjia
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://julyjia.github.io/2018/08/26/javascript数据类型/" title="javascript数据类型">https://julyjia.github.io/2018/08/26/javascript数据类型/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/数据类型/" rel="tag"># 数据类型</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/25/展开语法和剩余参数语法/" rel="next" title="展开语法和剩余参数语法">
+                <i class="fa fa-chevron-left"></i> 展开语法和剩余参数语法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/27/函数防抖和节流/" rel="prev" title="函数防抖和节流">
+                函数防抖和节流 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="hjia">
+            
+              <p class="site-author-name" itemprop="name">hjia</p>
+              <p class="site-description motion-element" itemprop="description">每天进步一点点</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/julyjia" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://stackoverflow.com/users/9992216/jia-hu" target="_blank" title="StackOverflow">
+                      
+                        <i class="fa fa-fw fa-stack-overflow"></i>StackOverflow</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类型转换"><span class="nav-number">1.</span> <span class="nav-text">类型转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#转Boolean"><span class="nav-number">1.1.</span> <span class="nav-text">转Boolean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转Number"><span class="nav-number">1.2.</span> <span class="nav-text">转Number</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象转基本类型"><span class="nav-number">1.3.</span> <span class="nav-text">对象转基本类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#valueOf-NaN"><span class="nav-number">1.3.1.</span> <span class="nav-text">valueOf()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#toString-NaN"><span class="nav-number">1.3.2.</span> <span class="nav-text">toString()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作符"><span class="nav-number">2.</span> <span class="nav-text">操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#布尔操作符"><span class="nav-number">2.1.</span> <span class="nav-text">布尔操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑非"><span class="nav-number">2.1.1.</span> <span class="nav-text">逻辑非</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑与"><span class="nav-number">2.1.2.</span> <span class="nav-text">逻辑与</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑或"><span class="nav-number">2.1.3.</span> <span class="nav-text">逻辑或</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一元操作符"><span class="nav-number">2.2.</span> <span class="nav-text">一元操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#递增和递减操作符"><span class="nav-number">2.2.1.</span> <span class="nav-text">递增和递减操作符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一元加和减操作符"><span class="nav-number">2.2.2.</span> <span class="nav-text">一元加和减操作符</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加性操作符"><span class="nav-number">2.3.</span> <span class="nav-text">加性操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#乘性操作符"><span class="nav-number">2.4.</span> <span class="nav-text">乘性操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关系操作符"><span class="nav-number">2.5.</span> <span class="nav-text">关系操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相等操作符"><span class="nav-number">2.6.</span> <span class="nav-text">相等操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#相等和不相等"><span class="nav-number">2.6.1.</span> <span class="nav-text">相等和不相等</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全等和不全等"><span class="nav-number">2.6.2.</span> <span class="nav-text">全等和不全等</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#包装对象"><span class="nav-number">3.</span> <span class="nav-text">包装对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类型检测"><span class="nav-number">4.</span> <span class="nav-text">类型检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#typeof"><span class="nav-number">4.1.</span> <span class="nav-text">typeof</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#instanceof"><span class="nav-number">4.2.</span> <span class="nav-text">instanceof</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-prototype-toString"><span class="nav-number">4.3.</span> <span class="nav-text">Object.prototype.toString</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#constructor-NaN"><span class="nav-number">4.4.</span> <span class="nav-text">constructor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">4.5.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运算符优先级"><span class="nav-number">5.</span> <span class="nav-text">运算符优先级</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#结合性"><span class="nav-number">5.1.</span> <span class="nav-text">结合性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#汇总表"><span class="nav-number">5.2.</span> <span class="nav-text">汇总表</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hjia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'CxUd26OneXS6046S0VeXA15o-gzGzoHsz',
+        appKey: '0qvDV8MhPOJ7UT6RMiJMQYfd',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="MVVM双向绑定原理,Object.defineProperty(),">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="hjia's Blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Object.defineProperty()定义Object.defineProperty ，顾名思义，为对象定义属性。在js中我们可以通过下面这几种方法定义属性： 12345678// 方法一： 使用点运算符someOne.name = &amp;apos;cover&amp;apos;;// 方法二：使用方括号someOne[&amp;apos;name&amp;apos;] = &amp;apos;cover&amp;apos;;//">
+<meta name="keywords" content="MVVM双向绑定原理,Object.defineProperty()">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Object.defineProperty()和Reflect.defineProperty()">
+<meta property="og:url" content="https://julyjia.github.io/2018/07/05/Object.defineProperty和Reflect.defineProperty/index.html">
+<meta property="og:site_name" content="hjia&#39;s Blog">
+<meta property="og:description" content="Object.defineProperty()定义Object.defineProperty ，顾名思义，为对象定义属性。在js中我们可以通过下面这几种方法定义属性： 12345678// 方法一： 使用点运算符someOne.name = &amp;apos;cover&amp;apos;;// 方法二：使用方括号someOne[&amp;apos;name&amp;apos;] = &amp;apos;cover&amp;apos;;//">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://julyjia.github.io/2018/07/05/Object.defineProperty和Reflect.defineProperty/Object.defineProperty和Reflect.defineProperty/属性描述符.png">
+<meta property="og:updated_time" content="2018-07-06T15:09:47.838Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Object.defineProperty()和Reflect.defineProperty()">
+<meta name="twitter:description" content="Object.defineProperty()定义Object.defineProperty ，顾名思义，为对象定义属性。在js中我们可以通过下面这几种方法定义属性： 12345678// 方法一： 使用点运算符someOne.name = &amp;apos;cover&amp;apos;;// 方法二：使用方括号someOne[&amp;apos;name&amp;apos;] = &amp;apos;cover&amp;apos;;//">
+<meta name="twitter:image" content="https://julyjia.github.io/2018/07/05/Object.defineProperty和Reflect.defineProperty/Object.defineProperty和Reflect.defineProperty/属性描述符.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'julyjia'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://julyjia.github.io/2018/07/05/Object.defineProperty和Reflect.defineProperty/">
+
+
+
+
+
+  <title>Object.defineProperty()和Reflect.defineProperty() | hjia's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d306ca89ff1819bf590c5e3f820fd918";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">hjia's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://julyjia.github.io/2018/07/05/Object.defineProperty和Reflect.defineProperty/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hjia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hjia's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Object.defineProperty()和Reflect.defineProperty()</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-05T17:13:28+08:00">
+                2018-07-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">Javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/05/Object.defineProperty和Reflect.defineProperty/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/07/05/Object.defineProperty和Reflect.defineProperty/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Object-defineProperty"><a href="#Object-defineProperty" class="headerlink" title="Object.defineProperty()"></a>Object.defineProperty()</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p><strong>Object.defineProperty</strong> ，顾名思义，<strong>为对象定义属性</strong>。在js中我们可以通过下面这几种方法定义属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 方法一： 使用点运算符</span><br><span class="line">someOne.name = &apos;cover&apos;;</span><br><span class="line">// 方法二：使用方括号</span><br><span class="line">someOne[&apos;name&apos;] = &apos;cover&apos;;</span><br><span class="line">// 方法三：使用 Object.defineProperty()</span><br><span class="line">Object.defineProperty(someOne, &apos;name&apos;, &#123;</span><br><span class="line">    value : &apos;cover&apos;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>从上面看，貌似使用Object.defineProperty()方法很麻烦，那这个方法存在的意义是什么呢？</p>
+<p>我们来看下 Object.defineProperty的定义：</p>
+<blockquote>
+<p>The Object.defineProperty() method defines a new property directly on an object, or modifies an exisiting property on an object, and returns the object. </p>
+</blockquote>
+<p>有上面的定义可知：该方法会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象。 </p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object.defineProperty(obj, prop, descriptor)</span><br></pre></td></tr></table></figure>
+<p><strong>参数：</strong></p>
+<p>obj：要在其上定义属性的对象。 </p>
+<p>prop：要定义或修改的属性的名称。 </p>
+<p>descriptor：将被定义或修改的属性描述符。 </p>
+<p><strong>返回值：</strong></p>
+<p>被传递给函数的对象。 </p>
+<h3 id="属性描述符"><a href="#属性描述符" class="headerlink" title="属性描述符"></a>属性描述符</h3><p>对象里目前存在的属性描述符有两种主要形式：<strong>数据描述符</strong>（data descriptors）和<strong>存取描述符</strong>（accessor descriptors）。<strong>数据描述符</strong>是一个具有值的属性，该值可能是可写的，也可能不是可写的。<strong>存取描述符</strong>是由getter-setter函数对描述的属性。描述符必须是这两种形式之一；不能同时是两者。 </p>
+<p>将属性描述符分类及其键值含义用思维导图形式总结如下：</p>
+<p><img src="Object.defineProperty和Reflect.defineProperty/属性描述符.png" alt="属性描述符"></p>
+<p><strong>注意：</strong>如果一个描述符不具有value,writable,get 和 set 任意一个关键字，那么它将被认为是一个数据描述符。如果一个描述符同时有(value或writable)和(get或set)关键字，将会产生一个异常。 </p>
+<p>这些选项不一定是自身属性，如果是继承来的也要考虑。为了确认保留这些默认值，你可能要在这之前冻结 <code>Object.prototype</code>，明确指定所有的选项，或者将<code>__proto__</code>属性指向<code>null</code>。 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">// 使用 __proto__</span><br><span class="line">var obj = &#123;&#125;;</span><br><span class="line">var descriptor = Object.create(null); // 没有继承的属性</span><br><span class="line">// 默认没有 enumerable，没有 configurable，没有 writable</span><br><span class="line">descriptor.value = &apos;static&apos;;</span><br><span class="line">Object.defineProperty(obj, &apos;key&apos;, descriptor);</span><br><span class="line"></span><br><span class="line">// 显式</span><br><span class="line">Object.defineProperty(obj, &quot;key&quot;, &#123;</span><br><span class="line">  enumerable: false,</span><br><span class="line">  configurable: false,</span><br><span class="line">  writable: false,</span><br><span class="line">  value: &quot;static&quot;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">// 循环使用同一对象</span><br><span class="line">function withValue(value) &#123;</span><br><span class="line">  var d = withValue.d || (</span><br><span class="line">    withValue.d = &#123;</span><br><span class="line">      enumerable: false,</span><br><span class="line">      writable: false,</span><br><span class="line">      configurable: false,</span><br><span class="line">      value: null</span><br><span class="line">    &#125;</span><br><span class="line">  );</span><br><span class="line">  d.value = value;</span><br><span class="line">  return d;</span><br><span class="line">&#125;</span><br><span class="line">// ... 并且 ...</span><br><span class="line">Object.defineProperty(obj, &quot;key&quot;, withValue(&quot;static&quot;));</span><br><span class="line"></span><br><span class="line">// 如果 freeze 可用, 防止代码添加或删除对象原型的属性</span><br><span class="line">// （value, get, set, enumerable, writable, configurable）</span><br><span class="line">(Object.freeze||Object)(Object.prototype);</span><br></pre></td></tr></table></figure>
+<h3 id="创建属性"><a href="#创建属性" class="headerlink" title="创建属性"></a>创建属性</h3><p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">var o = &#123;&#125;; // 创建一个新对象</span><br><span class="line"></span><br><span class="line">// 在对象中添加一个属性与数据描述符的示例</span><br><span class="line">Object.defineProperty(o, &quot;a&quot;, &#123;</span><br><span class="line">  value : 37,</span><br><span class="line">  writable : true,</span><br><span class="line">  enumerable : true,</span><br><span class="line">  configurable : true</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">// 对象o拥有了属性a，值为37</span><br><span class="line"></span><br><span class="line">// 在对象中添加一个属性与存取描述符的示例</span><br><span class="line">var bValue;</span><br><span class="line">Object.defineProperty(o, &quot;b&quot;, &#123;</span><br><span class="line">  get : function()&#123;</span><br><span class="line">    return bValue;</span><br><span class="line">  &#125;,</span><br><span class="line">  set : function(newValue)&#123;</span><br><span class="line">    bValue = newValue;</span><br><span class="line">  &#125;,</span><br><span class="line">  enumerable : true,</span><br><span class="line">  configurable : true</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">o.b = 38;</span><br><span class="line">// 对象o拥有了属性b，值为38</span><br><span class="line"></span><br><span class="line">// o.b的值现在总是与bValue相同，除非重新定义o.b</span><br><span class="line"></span><br><span class="line">// 数据描述符和存取描述符不能混合使用</span><br><span class="line">Object.defineProperty(o, &quot;conflict&quot;, &#123;</span><br><span class="line">  value: 0x9f91102, </span><br><span class="line">  get: function() &#123; </span><br><span class="line">    return 0xdeadbeef; </span><br><span class="line">  &#125; </span><br><span class="line">&#125;);</span><br><span class="line">// throws a TypeError: value appears only in data descriptors, get appears only in accessor descriptors</span><br></pre></td></tr></table></figure>
+<h3 id="修改属性"><a href="#修改属性" class="headerlink" title="修改属性"></a>修改属性</h3><p>如果属性已经存在，<code>Object.defineProperty()</code>将尝试根据描述符中的值以及对象当前的配置来修改这个属性。如果旧描述符将其<code>configurable</code> 属性设置为<code>false</code>，则该属性被认为是“不可配置的”，并且没有属性可以被改变（除了单向改变 writable 为 false）。当属性不可配置时，不能在数据和访问器属性类型之间切换。</p>
+<p>当试图改变不可配置属性（除了<code>writable</code> 属性之外）的值时会抛出{jsxref(“TypeError”)}}，除非当前值和新值相同。</p>
+<h3 id="添加多个属性和默认值"><a href="#添加多个属性和默认值" class="headerlink" title="添加多个属性和默认值"></a>添加多个属性和默认值</h3><p>考虑特性被赋予的默认特性值非常重要，通常，使用点运算符和<code>Object.defineProperty()</code>为对象的属性赋值时，数据描述符中的属性默认值是不同的：</p>
+<p>点运算符：拥有布尔值的字段的默认值都是<code>true</code>；</p>
+<p><code>Object.defineProperty()</code>：拥有布尔值的字段的默认值是<code>false</code> 。</p>
+<p>如下例所示。 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">var o = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">o.a = 1;</span><br><span class="line">// 等同于 :</span><br><span class="line">Object.defineProperty(o, &quot;a&quot;, &#123;</span><br><span class="line">  value : 1,</span><br><span class="line">  writable : true,</span><br><span class="line">  configurable : true,</span><br><span class="line">  enumerable : true</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 另一方面，</span><br><span class="line">Object.defineProperty(o, &quot;a&quot;, &#123; value : 1 &#125;);</span><br><span class="line">// 等同于 :</span><br><span class="line">Object.defineProperty(o, &quot;a&quot;, &#123;</span><br><span class="line">  value : 1,</span><br><span class="line">  writable : false,</span><br><span class="line">  configurable : false,</span><br><span class="line">  enumerable : false</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="视图和数据的联动"><a href="#视图和数据的联动" class="headerlink" title="视图和数据的联动"></a>视图和数据的联动</h3><p>给对象o定义新的属性b，并且定义属性b的get和set方法，当o.b的时候会调用b属性的get方法，给b属性赋值的时候，会调用set方法，这就是修改数据的时候，视图会自动更新的关键。</p>
+<p>前端获取数据后，需要根据数据操作dom，视图变化后，需要修改不少代码，使用Object.defineProperty()方法可以将数据和dom操作隔离，看一个例子：</p>
+<p>显示用户信息的html模版 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div&gt;</span><br><span class="line">    &lt;p&gt;你好，&lt;span id=&apos;nickName&apos;&gt;&lt;/span&gt;&lt;/p&gt;</span><br><span class="line">    &lt;div id=&quot;introduce&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+<p>设置一个数据的属性的getter和setter </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">//视图控制器</span><br><span class="line">var userInfo = &#123;&#125;;</span><br><span class="line">Object.defineProperty(userInfo, &quot;nickName&quot;, &#123;</span><br><span class="line">    get: function()&#123;</span><br><span class="line">        return document.getElementById(&apos;nickName&apos;).innerHTML;</span><br><span class="line">    &#125;,</span><br><span class="line">    set: function(nick)&#123;</span><br><span class="line">        document.getElementById(&apos;nickName&apos;).innerHTML = nick;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">Object.defineProperty(userInfo, &quot;introduce&quot;, &#123;</span><br><span class="line">    get: function()&#123;</span><br><span class="line">        return document.getElementById(&apos;introduce&apos;).innerHTML;</span><br><span class="line">    &#125;,</span><br><span class="line">    set: function(introduce)&#123;</span><br><span class="line">        document.getElementById(&apos;introduce&apos;).innerHTML = introduce;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//数据</span><br><span class="line">//todo 获取用户信息的代码</span><br><span class="line">....</span><br><span class="line">userInfo.nickName = &quot;xxx&quot;;</span><br><span class="line">userInfo.introduce = &quot;我是xxx，我来自云南，...&quot;</span><br></pre></td></tr></table></figure>
+<p>设置userInfo的nickName属性时会调用set方法，更新dom节点的html 。</p>
+<h3 id="一般的Setters和Getters"><a href="#一般的Setters和Getters" class="headerlink" title="一般的Setters和Getters"></a>一般的Setters和Getters</h3><p>下面的例子展示了如何实现一个自存档对象。 当设置<code>temperature</code> 属性时，<code>archive</code> 数组会获取日志条目。 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">function Archiver() &#123;</span><br><span class="line">  var temperature = null;</span><br><span class="line">  var archive = [];</span><br><span class="line"></span><br><span class="line">  Object.defineProperty(this, &apos;temperature&apos;, &#123;</span><br><span class="line">    get: function() &#123;</span><br><span class="line">      console.log(&apos;get!&apos;);</span><br><span class="line">      return temperature;</span><br><span class="line">    &#125;,</span><br><span class="line">    set: function(value) &#123;</span><br><span class="line">      temperature = value;</span><br><span class="line">      archive.push(&#123; val: temperature &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  this.getArchive = function() &#123; return archive; &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var arc = new Archiver();</span><br><span class="line">arc.temperature; // &apos;get!&apos;</span><br><span class="line">arc.temperature = 11;</span><br><span class="line">arc.temperature = 13;</span><br><span class="line">arc.getArchive(); // [&#123; val: 11 &#125;, &#123; val: 13 &#125;]</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">var pattern = &#123;</span><br><span class="line">    get: function () &#123;</span><br><span class="line">        return &apos;I alway return this string,whatever you have assigned&apos;;</span><br><span class="line">    &#125;,</span><br><span class="line">    set: function () &#123;</span><br><span class="line">        this.myname = &apos;this is my name string&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">function TestDefineSetAndGet() &#123;</span><br><span class="line">    Object.defineProperty(this, &apos;myproperty&apos;, pattern);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">var instance = new TestDefineSetAndGet();</span><br><span class="line">instance.myproperty = &apos;test&apos;;</span><br><span class="line"></span><br><span class="line">// &apos;I alway return this string,whatever you have assigned&apos;</span><br><span class="line">console.log(instance.myproperty);</span><br><span class="line">// &apos;this is my name string&apos;</span><br><span class="line">console.log(instance.myname);</span><br></pre></td></tr></table></figure>
+<h2 id="Reflect-defineProperty"><a href="#Reflect-defineProperty" class="headerlink" title="Reflect.defineProperty()"></a>Reflect.defineProperty()</h2><p>Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法，是 ES6 为了操作对象而提供的新 API。defineProperty()这个是静态方法。允许精确添加或修改对象上的属性。IE和欧朋不支持。</p>
+<p>静态方法<code>Reflect.defineProperty()</code> 基本等同于<code>Object.defineProperty()</code>方法，会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性， 唯一不同是返回 <code>Boolean</code>值。</p>
+<p><strong>语法：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Reflect.defineProperty(target, propertyKey, attributes)</span><br></pre></td></tr></table></figure>
+<p><strong>参数：</strong></p>
+<p>obj：要在其上定义属性的对象。 </p>
+<p>prop：要定义或修改的属性的名称。 </p>
+<p>descriptor：将被定义或修改的属性描述符。 </p>
+<p><strong>返回值：</strong></p>
+<p>返回的类型是Boolean 值，指示属性是否被成功定义。</p>
+<p><strong>示例：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var obj = &#123;&#125;;</span><br><span class="line">Reflect.defineProperty(obj, &apos;x&apos;, &#123;value: 7&#125;); // true</span><br><span class="line">obj.x; // 7</span><br></pre></td></tr></table></figure>
+<h2 id="Object-defineProperty-和Reflect-defineProperty-的区别"><a href="#Object-defineProperty-和Reflect-defineProperty-的区别" class="headerlink" title="Object.defineProperty()和Reflect.defineProperty()的区别"></a>Object.defineProperty()和Reflect.defineProperty()的区别</h2><ol>
+<li><p>返回值不同</p>
+<ul>
+<li>Object.defineProperty()返回被传递给函数的对象；</li>
+<li>Reflect.defineProperty()返回一个Boolean 值。</li>
+</ul>
+</li>
+<li><p>检查属性书否被成功返回</p>
+<ul>
+<li><p>使用Object.defineProperty()方法返回一个对象，或如果属性没有被成功定义，会抛出TypeError，定义属性时可以用<code>try...catch</code>捕获其中任何错误；</p>
+</li>
+<li><p>使用Reflect.defineProperty()方法只是简单地返回一个Boolean 值说明该属性是否被成功定义。可以使用<code>if...else</code>语句判断属性是否被成功定义。</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>参考资料：</strong></p>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty" target="_blank" rel="noopener">Object.defineProperty() MDN</a></p>
+<p><a href="http://www.cnblogs.com/oceanxing/p/3938443.html" target="_blank" rel="noopener">Object.defineProperty实现数据和视图的联动</a></p>
+<p><a href="https://cloud.tencent.com/developer/section/1192032" target="_blank" rel="noopener">Reflect.defineProperty</a></p>
+<p><a href="http://es6.ruanyifeng.com/#docs/reflect" target="_blank" rel="noopener">ES6入门</a></p>
+<p><a href="http://imweb.io/topic/56d40adc0848801a4ba198ce" target="_blank" rel="noopener">不会Object.defineProperty你就out了</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="hjia 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="hjia 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    hjia
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://julyjia.github.io/2018/07/05/Object.defineProperty和Reflect.defineProperty/" title="Object.defineProperty()和Reflect.defineProperty()">https://julyjia.github.io/2018/07/05/Object.defineProperty和Reflect.defineProperty/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MVVM双向绑定原理/" rel="tag"># MVVM双向绑定原理</a>
+          
+            <a href="/tags/Object-defineProperty/" rel="tag"># Object.defineProperty()</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/04/flex弹性盒子/" rel="next" title="flex弹性盒子">
+                <i class="fa fa-chevron-left"></i> flex弹性盒子
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/06/Javascript运行机制之Event-Loop/" rel="prev" title="Javascript运行机制之Event Loop">
+                Javascript运行机制之Event Loop <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="hjia">
+            
+              <p class="site-author-name" itemprop="name">hjia</p>
+              <p class="site-description motion-element" itemprop="description">每天进步一点点</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/julyjia" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://stackoverflow.com/users/9992216/jia-hu" target="_blank" title="StackOverflow">
+                      
+                        <i class="fa fa-fw fa-stack-overflow"></i>StackOverflow</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-defineProperty"><span class="nav-number">1.</span> <span class="nav-text">Object.defineProperty()</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#语法"><span class="nav-number">1.2.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#属性描述符"><span class="nav-number">1.3.</span> <span class="nav-text">属性描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建属性"><span class="nav-number">1.4.</span> <span class="nav-text">创建属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改属性"><span class="nav-number">1.5.</span> <span class="nav-text">修改属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加多个属性和默认值"><span class="nav-number">1.6.</span> <span class="nav-text">添加多个属性和默认值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#视图和数据的联动"><span class="nav-number">1.7.</span> <span class="nav-text">视图和数据的联动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一般的Setters和Getters"><span class="nav-number">1.8.</span> <span class="nav-text">一般的Setters和Getters</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reflect-defineProperty"><span class="nav-number">2.</span> <span class="nav-text">Reflect.defineProperty()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-defineProperty-和Reflect-defineProperty-的区别"><span class="nav-number">3.</span> <span class="nav-text">Object.defineProperty()和Reflect.defineProperty()的区别</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hjia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'CxUd26OneXS6046S0VeXA15o-gzGzoHsz',
+        appKey: '0qvDV8MhPOJ7UT6RMiJMQYfd',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>
